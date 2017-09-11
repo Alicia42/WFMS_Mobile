@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="com.example.alici.wfms_mobile.newCustomerFormActivity">
+
+        <TextView
+            android:id="@+id/contactInfoTxt"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Contact Information"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintBottom_toTopOf="@+id/fNameTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/fNameTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="First Name*"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/lNameTxtBx"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contactInfoTxt" />
+
+        <EditText
+            android:id="@+id/lNameTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Last Name*"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/hNumberTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fNameTxtBx" />
+
+        <EditText
+            android:id="@+id/hNumberTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Home Number"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toTopOf="@+id/mNumberTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lNameTxtBx" />
+
+        <EditText
+            android:id="@+id/mNumberTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Mobile Number"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/emailTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hNumberTxtBx" />
+
+        <EditText
+            android:id="@+id/emailTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Email*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/siteInfoTxt"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mNumberTxtBx" />
+
+        <TextView
+            android:id="@+id/siteInfoTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Site Information"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintBottom_toTopOf="@+id/addressTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailTxtBx" />
+
+        <EditText
+            android:id="@+id/addressTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Street Address*"
+            android:inputType="textPostalAddress"
+            app:layout_constraintBottom_toTopOf="@+id/suburbTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/siteInfoTxt" />
+
+        <EditText
+            android:id="@+id/suburbTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Suburb*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/areaCodeTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addressTxtBx" />
+
+        <EditText
+            android:id="@+id/areaCodeTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Area Code*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/postInfoTxt"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/suburbTxtBx" />
+
+        <TextView
+            android:id="@+id/postInfoTxt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Postal Information"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintBottom_toTopOf="@+id/sameAddChBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/areaCodeTxtBx" />
+
+        <CheckBox
+            android:id="@+id/sameAddChBx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Postal Address is same as Street Address"
+            app:layout_constraintBottom_toTopOf="@+id/pAddressTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/postInfoTxt" />
+
+        <EditText
+            android:id="@+id/pAddressTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Street Address*"
+            android:inputType="textPostalAddress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sameAddChBx" />
+
+        <EditText
+            android:id="@+id/pSuburbTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Suburb*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/pAreaCodeTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pAddressTxtBx" />
+
+        <EditText
+            android:id="@+id/pAreaCodeTxtBx"
+            android:layout_width="180dp"
+            android:layout_height="40dp"
+            android:hint="Area Code*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/CancelBtn"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pSuburbTxtBx" />
+
+        <Button
+            android:id="@+id/CancelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="cancel"
+            android:text="Login"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/pAddressTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/registerBtn" />
+
+        <Button
+            android:id="@+id/registerBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:onClick="register"
+            android:text="Login"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/CancelBtn" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>
