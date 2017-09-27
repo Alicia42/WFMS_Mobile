@@ -5,9 +5,12 @@ package com.example.alici.wfms_mobile;
  */
 
 import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Schedule {
@@ -80,5 +83,36 @@ public class Schedule {
         InstallTime = installTime;
         UserID = userID;
         InstallID = installID;
+    }
+
+    public Schedule(){}
+
+    public void getSchedules(JSONArray response){
+
+        ArrayList<Schedule> scheduleArrayList = new ArrayList<Schedule>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                scheduleArrayList.add(new Schedule(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Schedule schedule : scheduleArrayList) {
+
+            try {
+                Log.i("Install Date", schedule.getInstallDate().toString());
+                Log.i("Install Time", schedule.getInstallTime());
+                String toStringUser = String.valueOf(schedule.getUserID());
+                Log.i("User ID", toStringUser);
+                String toStringInstall = String.valueOf(schedule.getUserID());
+                Log.i("Sale ID", toStringInstall);
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 }

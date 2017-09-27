@@ -6,12 +6,14 @@ package com.example.alici.wfms_mobile;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class Sale {
 
@@ -293,5 +295,56 @@ public class Sale {
         }
 
 
+    }
+
+    public Sale(){}
+
+    public void getSales(JSONArray response){
+
+        ArrayList<Sale> saleArrayList = new ArrayList<Sale>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                saleArrayList.add(new Sale(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Sale sale : saleArrayList) {
+
+            try {
+                String toString = String.valueOf(sale.getSaleID());
+                Log.i("Sale ID", toString);
+                String toStringCust = String.valueOf(sale.getCustomerID());
+                Log.i("Customer ID", toStringCust);
+                String toStringUser = String.valueOf(sale.getUserID());
+                Log.i("User ID", toStringUser);
+                String toStringInstall = String.valueOf(sale.getInstallTypeID());
+                Log.i("Install Type ID", toStringInstall);
+                Log.i("Site Address", sale.getSiteAddress());
+                Log.i("Site Suburb", sale.getSiteSuburb());
+                Log.i("Sale Status", sale.getSaleStatus());
+                Log.i("Fire", sale.getFire());
+                String toStringPrice = String.valueOf(sale.getPrice());
+                Log.i("Price", toStringPrice);
+                String toStringBooked = String.valueOf(sale.isSiteCheckBooked());
+                Log.i("Site Check Booked", toStringBooked);
+                Log.i("Site Check Date", sale.getSiteCheckDate().toString());
+                Log.i("Site Check Time", sale.getSiteCheckTime().toString());
+                String toStringSalesperson = String.valueOf(sale.getSalesPerson());
+                Log.i("Salesperson", toStringSalesperson);
+                Log.i("Estimation Date", sale.getEstimationDate().toString());
+                Log.i("Quote Number", sale.getQuoteNumber());
+                Log.i("Site Check Path", sale.getSiteCheckPath());
+                Log.i("Quote Path", sale.getQuotePath());
+                Log.i("Photo Path", sale.getPhotoPath());
+                Log.i("Follow Up Date", sale.getFollowUpDate().toString());
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 }

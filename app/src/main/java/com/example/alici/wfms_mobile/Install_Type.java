@@ -4,8 +4,13 @@ package com.example.alici.wfms_mobile;
  * Created by libbyjennings on 23/09/17.
  */
 
+import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 public class Install_Type {
@@ -75,5 +80,37 @@ public class Install_Type {
 
     public void setSiteCheckFile(String siteCheckFile) {
         SiteCheckFile = siteCheckFile;
+    }
+
+    public Install_Type(){}
+
+    public void getInstallTypes(JSONArray response){
+
+        ArrayList<Install_Type> install_typeArrayList = new ArrayList<Install_Type>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                install_typeArrayList.add(new Install_Type(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install_Type install_type : install_typeArrayList) {
+
+            try {
+                String toString = String.valueOf(install_type.getInstallTypeID());
+                Log.i("InstallType ID", toString);
+                Log.i("InstallTypeDescription", install_type.getInstallDescription());
+                String toStringBase = String.valueOf(install_type.getBasePrice());
+                Log.i("Base Price", toStringBase);
+                Log.i("email from letter", install_type.getEmailFromLetter());
+                Log.i("site check file", install_type.getSiteCheckFile());
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 }

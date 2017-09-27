@@ -6,11 +6,13 @@ package com.example.alici.wfms_mobile;
 
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Time;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Follow_Up_Comment {
@@ -90,8 +92,35 @@ public class Follow_Up_Comment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
 
+    public Follow_Up_Comment(){}
 
+    public void getFollowUpComments(JSONArray response){
+        ArrayList<Follow_Up_Comment> follow_up_commentArrayList = new ArrayList<Follow_Up_Comment>();
 
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                follow_up_commentArrayList.add(new Follow_Up_Comment(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Follow_Up_Comment follow_up_comment : follow_up_commentArrayList) {
+
+            try {
+                String toStringComment = String.valueOf(follow_up_comment.getComment());
+                Log.i("Comment ID", toStringComment);
+                String toStringSale = String.valueOf(follow_up_comment.getSaleID());
+                Log.i("Sale ID", toStringSale);
+                Log.i("Comment", follow_up_comment.getComment());
+                Log.i("Time Stamp", follow_up_comment.getTime_Stamp().toString());
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 }

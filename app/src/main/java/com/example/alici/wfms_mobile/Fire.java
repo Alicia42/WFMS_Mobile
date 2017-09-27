@@ -4,8 +4,13 @@ package com.example.alici.wfms_mobile;
  * Created by libbyjennings on 25/09/17.
  */
 
+import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class Fire {
 
@@ -108,5 +113,38 @@ public class Fire {
         this.ECAN = ECAN;
         Nelson = nelson;
         Life = life;
+    }
+
+    public Fire(){}
+
+    public void getFires(JSONArray response){
+
+        ArrayList<Fire> fireArrayList = new ArrayList<Fire>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                fireArrayList.add(new Fire(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Fire fire : fireArrayList) {
+
+            try {
+                Log.i("Fire ID", fire.getFireID());
+                Log.i("Fire Type", fire.getFireType());
+                Log.i("Make", fire.getMake());
+                Log.i("Model", fire.getModel());
+                Log.i("Fuel", fire.getFuel());
+                Log.i("ECAN", fire.getECAN());
+                Log.i("Nelson", fire.getNelson());
+                Log.i("Life", fire.getLife());
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 }

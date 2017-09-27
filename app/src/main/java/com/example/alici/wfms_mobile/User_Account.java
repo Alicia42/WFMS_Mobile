@@ -4,8 +4,13 @@ package com.example.alici.wfms_mobile;
  * Created by libbyjennings on 23/09/17.
  */
 
+import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 
 public class User_Account {
@@ -13,7 +18,6 @@ public class User_Account {
     private int UserID;
     private int AuthenticationID;
     private String UserName;
-    private String Role;
     private String NZHHA_Number;
     private String FirstName;
     private String LastName;
@@ -31,7 +35,6 @@ public class User_Account {
             this.UserID = object.getInt("UserID");
             this.AuthenticationID = object.getInt("AuthenticationID");
             this.UserName = object.getString("UserName");
-            this.Role = object.getString("Role");
             this.NZHHA_Number = object.getString("NZHHA_Number");
             this.FirstName = object.getString("FirstName");
             this.LastName = object.getString("LastName");
@@ -49,11 +52,10 @@ public class User_Account {
         }
     }
 
-    public User_Account(int userID, int authenticationID, String userName, String role, String NZHHA_Number, String firstName, String lastName, String postalAddress, String postalSuburb, String postalCode, String phone, String mobile, String email, String reesNumber, boolean accountActive) {
+    public User_Account(int userID, int authenticationID, String userName, String NZHHA_Number, String firstName, String lastName, String postalAddress, String postalSuburb, String postalCode, String phone, String mobile, String email, String reesNumber, boolean accountActive) {
         UserID = userID;
         AuthenticationID = authenticationID;
         UserName = userName;
-        Role = role;
         this.NZHHA_Number = NZHHA_Number;
         FirstName = firstName;
         LastName = lastName;
@@ -89,14 +91,6 @@ public class User_Account {
 
     public void setUserName(String userName) {
         UserName = userName;
-    }
-
-    public String getRole() {
-        return Role;
-    }
-
-    public void setRole(String role) {
-        Role = role;
     }
 
     public String getNZHHA_Number() {
@@ -185,5 +179,45 @@ public class User_Account {
 
     public void setAccountActive(boolean accountActive) {
         AccountActive = accountActive;
+    }
+
+    public User_Account(){}
+
+    public void getUserAccounts(JSONArray response){
+
+        ArrayList<User_Account> user_accountArrayList = new ArrayList<User_Account>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                user_accountArrayList.add(new User_Account(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (User_Account user_account : user_accountArrayList) {
+
+            try {
+                String toString = String.valueOf(user_account.getAuthenticationID());
+                Log.i("Authentication ID", toString);
+                String toStringUser = String.valueOf(user_account.getUserID());
+                Log.i("UserID", toStringUser);
+                Log.i("first name", user_account.getFirstName());
+                Log.i("last name", user_account.getLastName());
+                Log.i("postal address", user_account.getPostalAddress());
+                Log.i("postal suburb", user_account.getPostalSuburb());
+                Log.i("postal code", user_account.getPostalCode());
+                Log.i("phone", user_account.getPhone());
+                Log.i("mobile", user_account.getMobile());
+                Log.i("email", user_account.getEmail());
+                Log.i("rees number", user_account.getReesNumber());
+                String toStringAccountActive = String.valueOf(user_account.isAccountActive());
+                Log.i("Account Active", toStringAccountActive);
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 }

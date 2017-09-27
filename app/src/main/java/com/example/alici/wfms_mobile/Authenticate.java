@@ -5,8 +5,12 @@ package com.example.alici.wfms_mobile;
  */
 
 import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class Authenticate {
 
@@ -43,5 +47,32 @@ public class Authenticate {
 
     public void setPasswordHash(String passwordHash) {
         PasswordHash = passwordHash;
+    }
+
+    public Authenticate(){}
+
+    public void getAuthentications(JSONArray response){
+        ArrayList<Authenticate> authenticateArrayList = new ArrayList<Authenticate>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                authenticateArrayList.add(new Authenticate(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Authenticate authenticate : authenticateArrayList) {
+
+            try {
+                String toString = String.valueOf(authenticate.getAuthenticationID());
+                Log.i("Authentication ID", toString);
+                Log.i("Password Hash", authenticate.getPasswordHash());
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 }

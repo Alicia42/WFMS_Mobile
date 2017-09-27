@@ -6,6 +6,13 @@ package com.example.alici.wfms_mobile;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.util.Log;
+import java.util.ArrayList;
+import org.json.JSONArray;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
+import java.util.List;
 
 public class Customer {
 
@@ -43,6 +50,8 @@ public class Customer {
         this.FirstName = FirstName;
         this.LastName = LastName;
     }
+
+    public Customer(){}
 
     public int getCustomerID() {
         return this.CustomerID;
@@ -120,8 +129,42 @@ public class Customer {
     public void setLastName(String LastName) {
         this.LastName = LastName;
     }
+
     public void setPostalAddress(String PostalAddress) {
         this.PostalAddress = PostalAddress;
     }
 
+    public void getCustomers(JSONArray response) {
+
+        ArrayList<Customer> customerArray = new ArrayList<Customer>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                customerArray.add(new Customer(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        for (Customer customer : customerArray) {
+
+            try {
+                String toString = String.valueOf(customer.getCustomerID());
+                Log.i("customerID", toString);
+                Log.i("first name", customer.getFirstName());
+                Log.i("last name", customer.getLastName());
+                Log.i("postal address", customer.getPostalAddress());
+                Log.i("postal suburb", customer.getPostalSuburb());
+                Log.i("postal code", customer.getPostalCode());
+                Log.i("phone", customer.getPhone());
+                Log.i("mobile", customer.getMobile());
+                Log.i("email", customer.getEmail());
+                Log.i("rees code", customer.getReesCode());
+            } catch (Exception e) {
+
+                Log.i("Error", "Field is null");
+            }
+        }
+    }
 }

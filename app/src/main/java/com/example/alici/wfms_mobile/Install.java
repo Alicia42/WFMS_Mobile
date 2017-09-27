@@ -5,10 +5,13 @@ package com.example.alici.wfms_mobile;
  */
 
 import android.util.Log;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class Install {
 
@@ -17,9 +20,6 @@ public class Install {
     private int InstallID;
     private int SaleID;
     private String InstallStatus;
-    private String InvoicePath;
-    private String SiteCheckPath;
-    private String PhotoPath;
     private boolean OrderChecked;
     private String InstallerID;
     private Date InstallDate;
@@ -51,30 +51,6 @@ public class Install {
 
     public void setInstallStatus(String installStatus) {
         InstallStatus = installStatus;
-    }
-
-    public String getInvoicePath() {
-        return InvoicePath;
-    }
-
-    public void setInvoicePath(String invoicePath) {
-        InvoicePath = invoicePath;
-    }
-
-    public String getSiteCheckPath() {
-        return SiteCheckPath;
-    }
-
-    public void setSiteCheckPath(String siteCheckPath) {
-        SiteCheckPath = siteCheckPath;
-    }
-
-    public String getPhotoPath() {
-        return PhotoPath;
-    }
-
-    public void setPhotoPath(String photoPath) {
-        PhotoPath = photoPath;
     }
 
     public boolean isOrderChecked() {
@@ -146,9 +122,6 @@ public class Install {
             this.InstallID = object.getInt("InstallID");
             this.SaleID = object.getInt("SaleID");
             this.InstallStatus = object.getString("InstallStatus");
-            this.InvoicePath = object.getString("InvoicePath");
-            this.SiteCheckPath = object.getString("SiteCheckPath");
-            this.PhotoPath = object.getString("PhotoPath");
             this.OrderChecked = object.getBoolean("OrderChecked");
             this.InstallerID = object.getString("InstallerID");
 
@@ -174,9 +147,48 @@ public class Install {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
 
+    public Install(){}
 
+    public void getInstalls(JSONArray response){
 
+        ArrayList<Install> installArrayList = new ArrayList<Install>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                installArrayList.add(new Install(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install install : installArrayList) {
+
+            try {
+                String toStringInstall = String.valueOf(install.getInstallID());
+                Log.i("Install ID", toStringInstall);
+                String toString = String.valueOf(install.getSaleID());
+                Log.i("Sale ID", toString);
+                Log.i("Install Status", install.getInstallStatus());
+                String toStringChecked = String.valueOf(install.isOrderChecked());
+                Log.i("Order Checked", toStringChecked);
+                Log.i("Installer ID", install.getInstallerID());
+                Log.i("Install Date", install.getInstallDate().toString());
+                Log.i("Install Time", install.getInstallTime());
+                String toStringParts = String.valueOf(install.getPartsReady());
+                Log.i("Parts Ready", toStringParts);
+                Log.i("Note to Installer", install.getNoteToInstaller());
+                Log.i("Installer ID", install.getInstallerID());
+                String toStringComplete = String.valueOf(install.isInstallComplete());
+                Log.i("Install Complete", toStringComplete);
+                Log.i("Installer Note", install.getInstallerNote());
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
     }
 
 }
