@@ -2,12 +2,15 @@ package com.example.alici.wfms_mobile;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Button;
 import android.text.TextWatcher;
 import android.text.Editable;
 import android.widget.Toast;
 import android.view.View;
+import android.view.View.OnClickListener;
 
 public class NewCustomerFormActivity extends AppCompatActivity {
 
@@ -16,6 +19,13 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     private EditText EmailAddress;
     private EditText HomeNumber;
     private EditText MobileNumber;
+    private EditText address;
+    private EditText suburb;
+    private EditText areaCode;
+    private CheckBox sameAddChBx;
+    private EditText postalAddress;
+    private EditText postalSuburb;
+    private EditText postalAreaCode;
     private Button createCustomerBtn;
 
     @Override
@@ -64,8 +74,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         HomeNumber = (EditText) findViewById(R.id.hNumberTxtBx);
         HomeNumber.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(HomeNumber);
-                CustomerFormValidation.isHomePhoneNumber(HomeNumber, false);
+                CustomerFormValidation.isHomePhoneNumber(HomeNumber, true);
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){}
@@ -74,11 +83,92 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         MobileNumber = (EditText) findViewById(R.id.mNumberTxtBx);
         MobileNumber.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(MobileNumber);
-                CustomerFormValidation.isMobileNumber(MobileNumber, false);
+                CustomerFormValidation.isMobileNumber(MobileNumber, true);
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        address = (EditText) findViewById(R.id.addressTxtBx);
+        address.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                CustomerFormValidation.hasText(address);
+                CustomerFormValidation.isAddress(address, true);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        suburb = (EditText) findViewById(R.id.suburbTxtBx);
+        suburb.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                CustomerFormValidation.hasText(suburb);
+                CustomerFormValidation.isSuburb(suburb, true);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        areaCode = (EditText) findViewById(R.id.areaCodeTxtBx);
+        areaCode.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                CustomerFormValidation.hasText(areaCode);
+                CustomerFormValidation.isAreaCode(areaCode, true);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        postalAddress = (EditText) findViewById(R.id.pAddressTxtBx);
+        postalAddress.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                CustomerFormValidation.hasText(postalAddress);
+                CustomerFormValidation.isAddress(postalAddress, true);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+
+        postalSuburb = (EditText) findViewById(R.id.pSuburbTxtBx);
+        postalSuburb.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                CustomerFormValidation.hasText(postalSuburb);
+                CustomerFormValidation.isSuburb(postalSuburb, true);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+        postalAreaCode = (EditText) findViewById(R.id.pAreaCodeTxtBx);
+        postalAreaCode.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                CustomerFormValidation.hasText(postalAreaCode);
+                CustomerFormValidation.isAreaCode(postalAreaCode, true);
+            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            public void onTextChanged(CharSequence s, int start, int before, int count){}
+        });
+        sameAddChBx = (CheckBox) findViewById(R.id.sameAddChBx);
+        sameAddChBx.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                if(sameAddChBx.isChecked()){
+
+                    if(CustomerFormValidation.hasText(areaCode) || CustomerFormValidation.hasText(suburb) ||CustomerFormValidation.hasText(address)) {
+                        System.out.println("Checked");
+                        postalAddress.setText(address.getText());
+                        postalSuburb.setText(suburb.getText());
+                        postalAreaCode.setText(areaCode.getText());
+                    }
+
+                }else{
+                    System.out.println("Un-Checked");
+                    postalAddress.setText("");
+                    postalSuburb.setText("");
+                    postalAreaCode.setText("");
+                }
+            }
         });
 
         createCustomerBtn = (Button) findViewById(R.id.registerBtn);
@@ -109,7 +199,15 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         if (!CustomerFormValidation.isEmailAddress(EmailAddress, true)) ret = false;
         if (!CustomerFormValidation.isFirstName(fNameTxtBx, true)) ret = false;
         if (!CustomerFormValidation.isLastName(lNameTxtBx, true)) ret = false;
-        if (!CustomerFormValidation.isHomePhoneNumber(HomeNumber, false)) ret = false;
+        /*if(CustomerFormValidation.hasText(HomeNumber) || !CustomerFormValidation.hasText(MobileNumber)){
+            ret = false;
+        }*/
+        if (!CustomerFormValidation.isAddress(address, true)) ret = false;
+        if (!CustomerFormValidation.isAddress(postalAddress, true)) ret = false;
+        if (!CustomerFormValidation.isSuburb(suburb, true)) ret = false;
+        if (!CustomerFormValidation.isSuburb(postalSuburb, true)) ret = false;
+        if (!CustomerFormValidation.isAreaCode(areaCode, true)) ret = false;
+        if (!CustomerFormValidation.isAreaCode(postalAreaCode, true)) ret = false;
 
         return ret;
     }

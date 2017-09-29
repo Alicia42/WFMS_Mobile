@@ -14,13 +14,22 @@ public class CustomerFormValidation {
     private static final String Email_Regex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String REQUIRED_MSG = "required";
     private static final String Letter_Regex = "(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)";
-    private static final String Home_Phone_Regex = "\\d{3}-\\d{7}";
+    private static final String Home_Phone_Regex = "[0-9]{9}";
+    private static final String Mobile_Phone_Regex = "[0-9]{9,10}";
+    private static final String Address_Regex = "^\\d+\\s[A-z]+\\s[A-z]+";
+    private static final String Area_Code_Regex = "[0-9]{4}";
+    private static final String Suburb_Regex = "(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)\\s(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)";
+    private static final String Suburb_Regex2 = "(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)";
 
     // Error Messages
     private static final String EMAIL_MSG = "invalid email";
     private static final String First_Name_MSG = "invalid first name";
     private static final String Last_Name_MSG = "invalid last name";
-    private static final String Home_Phone_MSG = "invalid home phone number (e.g. 091231231)";
+    private static final String Home_Phone_MSG = "invalid home phone number (e.g. 091234567)";
+    private static final String Mobile_Phone_MSG = "invalid mobile phone number (e.g. 0212345678)";
+    private static final String Address_MSG = "invalid address (e.g. 10 Fake Street)";
+    private static final String Suburb_MSG = "invalid suburb (e.g. Henderson)";
+    private static final String Area_Code_MSG = "invalid area code (e.g. 1234)";
 
     // call this method when you need to check email validation
     public static boolean isEmailAddress(EditText editText, boolean required) {
@@ -44,7 +53,29 @@ public class CustomerFormValidation {
 
     // call this method when you need to check phone number validation
     public static boolean isMobileNumber(EditText editText, boolean required) {
-        return isValid(editText, Home_Phone_Regex, Home_Phone_MSG, required);
+        return isValid(editText, Mobile_Phone_Regex, Mobile_Phone_MSG, required);
+    }
+
+    // call this method when you need to check address validation
+    public static boolean isAddress(EditText editText, boolean required) {
+        return isValid(editText, Address_Regex, Address_MSG, required);
+    }
+
+    // call this method when you need to check suburb validation
+    public static boolean isSuburb(EditText editText, boolean required) {
+        String regex = "";
+        if(isValid(editText, Suburb_Regex, Suburb_MSG, required)){
+            regex = Suburb_Regex;
+        }
+        else if(isValid(editText, Suburb_Regex2, Suburb_MSG, required)){
+            regex = Suburb_Regex2;
+        }
+        return isValid(editText, regex, Suburb_MSG, required);
+    }
+
+    // call this method when you need to check area code validation
+    public static boolean isAreaCode(EditText editText, boolean required) {
+        return isValid(editText, Area_Code_Regex, Area_Code_MSG, required);
     }
 
     // return true if the input field is valid, based on the parameter passed

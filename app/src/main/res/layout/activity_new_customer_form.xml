@@ -108,15 +108,16 @@
             app:layout_constraintBottom_toTopOf="@+id/suburbTxtBx"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/siteInfoTxt" />
+            app:layout_constraintTop_toBottomOf="@+id/siteInfoTxt"
+            app:layout_constraintHorizontal_bias="0.0" />
 
         <EditText
             android:id="@+id/suburbTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
+            android:layout_weight="0.5"
             android:hint="Suburb*"
-            android:inputType="textPhonetic"
+            android:inputType="text"
             app:layout_constraintBottom_toTopOf="@+id/postInfoTxt"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/areaCodeTxtBx"
@@ -125,10 +126,10 @@
         <EditText
             android:id="@+id/areaCodeTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
+            android:layout_weight="0.5"
             android:hint="Area Code*"
-            android:inputType="textPhonetic"
+            android:inputType="number"
             app:layout_constraintBottom_toTopOf="@+id/postInfoTxt"
             app:layout_constraintLeft_toRightOf="@+id/suburbTxtBx"
             app:layout_constraintRight_toRightOf="parent"
@@ -149,9 +150,9 @@
         <CheckBox
             android:id="@+id/sameAddChBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="wrap_content"
-            android:text="Postal Address is same as Street Address"
+            android:layout_weight="0.5"
+            android:text="Postal Address is same as Site Address"
             app:layout_constraintBottom_toTopOf="@+id/pAddressTxtBx"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
@@ -164,33 +165,33 @@
             android:layout_height="40dp"
             android:hint="Street Address*"
             android:inputType="textPostalAddress"
-            app:layout_constraintBottom_toTopOf="@+id/pSuburbTxtBx"
+            app:layout_constraintBottom_toTopOf="@+id/pAreaCodeTxtBx"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sameAddChBx" />
 
         <EditText
-            android:id="@+id/pSuburbTxtBx"
+            android:id="@+id/pAreaCodeTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
-            android:hint="Suburb*"
+            android:layout_weight="0.5"
+            android:hint="Area Code*"
             android:inputType="textPhonetic"
             app:layout_constraintBottom_toTopOf="@+id/CancelBtn"
-            app:layout_constraintLeft_toRightOf="@+id/pAreaCodeTxtBx"
+            app:layout_constraintLeft_toRightOf="@+id/pSuburbTxtBx"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pAddressTxtBx" />
 
         <EditText
-            android:id="@+id/pAreaCodeTxtBx"
+            android:id="@+id/pSuburbTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
-            android:hint="Area Code*"
+            android:layout_weight="0.5"
+            android:hint="Suburb*"
             android:inputType="textPhonetic"
             app:layout_constraintBottom_toTopOf="@+id/CancelBtn"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/pSuburbTxtBx"
+            app:layout_constraintRight_toLeftOf="@id/pAreaCodeTxtBx"
             app:layout_constraintTop_toBottomOf="@+id/pAddressTxtBx" />
 
         <Button
