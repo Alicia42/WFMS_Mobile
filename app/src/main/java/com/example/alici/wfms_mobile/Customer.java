@@ -6,6 +6,8 @@ package com.example.alici.wfms_mobile;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.text.Editable;
 import android.util.Log;
 import java.util.ArrayList;
 import org.json.JSONArray;
@@ -161,6 +163,35 @@ public class Customer {
                 Log.i("mobile", customer.getMobile());
                 Log.i("email", customer.getEmail());
                 Log.i("rees code", customer.getReesCode());
+            } catch (Exception e) {
+
+                Log.i("Error", "Field is null");
+            }
+        }
+    }
+
+    public void getNewCustomer(JSONArray response, Editable email) {
+
+        ArrayList<Customer> customerArray = new ArrayList<Customer>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                customerArray.add(new Customer(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        for (Customer customer : customerArray) {
+
+            try {
+                if(customer.getEmail().equals(email.toString())) {
+                    String toString = String.valueOf(customer.getCustomerID());
+                    Log.i("customerID", toString);
+                    Log.i("email", customer.getEmail());
+                    Log.i("found", "true");
+                }
             } catch (Exception e) {
 
                 Log.i("Error", "Field is null");

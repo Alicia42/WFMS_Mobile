@@ -15,15 +15,24 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URL;
 
 import android.os.AsyncTask;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+
 import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
 
 public class NewCustomerFormActivity extends AppCompatActivity {
 
@@ -230,7 +239,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         return ret;
     }
 
-    private class APIRequest extends AsyncTask<Void, Void, String> {
+    private class PostCustomer extends AsyncTask<Void, Void, String> {
 
         Editable fName = firstName.getText();
         Editable lName = lastName.getText();
@@ -292,6 +301,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
             Log.i("Success","Form Submitted");
+            getCustomer(email); //find customer ID of new customer with the email address
         }
     }
 
@@ -299,9 +309,25 @@ public class NewCustomerFormActivity extends AppCompatActivity {
 
         public void run() {
 
-            new APIRequest().execute();
+            new PostCustomer().execute();
 
         }
+    }
+
+    private void getCustomer(final Editable email) {
+
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Accept", "application/json"));
+
+        WCHRestClient.get(NewCustomerFormActivity.this, "/getnewcustomer", headers.toArray(new Header[headers.size()]),
+                null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                        Customer customer = new Customer();
+                        customer.getNewCustomer(response, email);
+                    }
+                });
     }
 
 }

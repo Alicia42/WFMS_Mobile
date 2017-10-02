@@ -13,13 +13,13 @@ public class CustomerFormValidation {
     // Regular Expression
     private static final String Email_Regex = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private static final String REQUIRED_MSG = "required";
-    private static final String Letter_Regex = "(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)";
+    private static final String Letter_Regex = "(([A-Za-z]+|\\\\*)[:,-])*([A-Za-z]+|\\\\*)";
     private static final String Home_Phone_Regex = "[0-9]{9}";
     private static final String Mobile_Phone_Regex = "[0-9]{9,10}";
-    private static final String Address_Regex = "^\\d+\\s[A-z]+\\s[A-z]+";
+    private static final String Address_Regex = "^\\d+\\s[A-Za-z]+\\s[A-Za-z]+";
     private static final String Area_Code_Regex = "[0-9]{4}";
-    private static final String Suburb_Regex = "(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)\\s(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)";
-    private static final String Suburb_Regex2 = "(([a-z]+|\\\\*)[:,-])*([a-z]+|\\\\*)";
+    private static final String Suburb_Regex = "(([A-Za-z]+|\\\\*)[:,-])*([A-Za-z]+|\\\\*)\\s(([a-z]+|\\\\*)[:,-])*([A-Za-z]+|\\\\*)";
+    private static final String Suburb_Regex2 = "(([A-Za-z]+|\\\\*)[:,-])*([A-Za-z]+|\\\\*)";
 
     // Error Messages
     private static final String EMAIL_MSG = "invalid email";
