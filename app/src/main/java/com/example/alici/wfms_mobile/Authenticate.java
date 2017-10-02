@@ -51,7 +51,7 @@ public class Authenticate {
 
     public Authenticate(){}
 
-    public void getAuthentications(JSONArray response){
+    public void getAuthentication(JSONArray response, String hash){
         ArrayList<Authenticate> authenticateArrayList = new ArrayList<Authenticate>();
 
         for (int i = 0; i < response.length(); i++) {
@@ -65,9 +65,15 @@ public class Authenticate {
         for (Authenticate authenticate : authenticateArrayList) {
 
             try {
-                String toString = String.valueOf(authenticate.getAuthenticationID());
-                Log.i("Authentication ID", toString);
-                Log.i("Password Hash", authenticate.getPasswordHash());
+                if(authenticate.getPasswordHash().equals(hash)) {
+                    Log.i("Success", "Matched");
+                    String toString = String.valueOf(authenticate.getAuthenticationID());
+                    Log.i("Authentication ID", toString);
+                    Log.i("Password Hash", authenticate.getPasswordHash());
+                }
+                else{
+                    Log.i("Error", "Didn't match");
+                }
             }
             catch (Exception e){
 

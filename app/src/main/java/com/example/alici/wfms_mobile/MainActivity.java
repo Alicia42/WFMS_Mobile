@@ -13,17 +13,30 @@ import org.json.JSONArray;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import java.util.List;
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.io.IOException;
+import android.util.Base64;
+import android.widget.EditText;
+
+import java.io.UnsupportedEncodingException;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public BooVariable bv;
-
+    private String SHAHash;
+    public static int NO_OPTIONS=0;
+    private EditText passwordTxtBx;
+    public String md5Hash;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        passwordTxtBx = (EditText) findViewById(R.id.passwordTxtBx);
 
         Button loginBtn = (Button) findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(this);
@@ -43,7 +56,83 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /*private void hashPassword(String password){
+
+        //password = "password";
+        MessageDigest mdSha1 = null;
+        try
+        {
+            mdSha1 = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e1) {
+            Log.e("myapp", "Error initializing SHA1 message digest");
+        }
+        try {
+            mdSha1.update(password.getBytes("ASCII"));
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        byte[] data = mdSha1.digest();
+        try {
+            SHAHash=convertToHex(data);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        Log.i("SHA-1 hash", SHAHash);
+
+    }
+
+    private static String convertToHex(byte[] data) throws java.io.IOException
+    {
+
+
+        StringBuffer sb = new StringBuffer();
+        String hex=null;
+
+        hex=Base64.encodeToString(data, 0, data.length, NO_OPTIONS);
+
+        sb.append(hex);
+
+        return sb.toString();
+    }*/
+
+    public void computeMD5Hash(String password)
+    {
+
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest.getInstance("MD5");
+            digest.update(password.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            StringBuffer MD5Hash = new StringBuffer();
+            for (int i = 0; i < messageDigest.length; i++)
+            {
+                String h = Integer.toHexString(0xFF & messageDigest[i]);
+                while (h.length() < 2)
+                    h = "0" + h;
+                MD5Hash.append(h);
+            }
+
+            //result.setText("MD5 hash generated is: " + " " + MD5Hash);
+            md5Hash = MD5Hash.toString();
+            Log.i("MD5 Hash", md5Hash);
+
+        }
+        catch (NoSuchAlgorithmException e)
+        {
+            e.printStackTrace();
+        }
+
+
+    }
+
     public void onClick(View v) {
+
+        computeMD5Hash(passwordTxtBx.getText().toString());
+        getAuthentication();
         Intent intent = new Intent(this, NewCustomerFormActivity.class);
         startActivity(intent);
     }
@@ -141,6 +230,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getAuthentication() {
 
+        load();
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
@@ -150,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
                         Authenticate authenticate = new Authenticate();
-                        authenticate.getAuthentications(response);
+                        authenticate.getAuthentication(response, md5Hash);
                     }
                 });
         bv.setBoo(true);
