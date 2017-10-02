@@ -84,6 +84,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getCustomers() {
 
+        load();
+
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 

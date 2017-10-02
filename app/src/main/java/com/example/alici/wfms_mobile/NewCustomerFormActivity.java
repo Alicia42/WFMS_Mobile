@@ -11,11 +11,24 @@ import android.text.Editable;
 import android.widget.Toast;
 import android.view.View;
 import android.view.View.OnClickListener;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+
+import org.json.JSONObject;
+
+import java.net.URL;
+
+import android.os.AsyncTask;
+import org.json.JSONException;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class NewCustomerFormActivity extends AppCompatActivity {
 
-    private EditText fNameTxtBx;
-    private EditText lNameTxtBx;
+    private EditText firstName;
+    private EditText lastName;
     private EditText EmailAddress;
     private EditText HomeNumber;
     private EditText MobileNumber;
@@ -28,6 +41,8 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     private EditText postalAreaCode;
     private Button createCustomerBtn;
 
+    public URL url;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,25 +51,26 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         registerViews();
     }
 
+
     private void registerViews() {
 
-        fNameTxtBx = (EditText) findViewById(R.id.fNameTxtBx);
+        firstName = (EditText) findViewById(R.id.fNameTxtBx);
         // TextWatcher would let us check validation error on the fly
-        fNameTxtBx.addTextChangedListener(new TextWatcher() {
+        firstName.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(fNameTxtBx);
-                CustomerFormValidation.isFirstName(fNameTxtBx, true);
+                CustomerFormValidation.hasText(firstName);
+                CustomerFormValidation.isFirstName(firstName, true);
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){}
         });
 
-        lNameTxtBx = (EditText) findViewById(R.id.lNameTxtBx);
+        lastName = (EditText) findViewById(R.id.lNameTxtBx);
         // TextWatcher would let us check validation error on the fly
-        lNameTxtBx.addTextChangedListener(new TextWatcher() {
+        lastName.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(lNameTxtBx);
-                CustomerFormValidation.isLastName(lNameTxtBx, true);
+                CustomerFormValidation.hasText(lastName);
+                CustomerFormValidation.isLastName(lastName, true);
             }
             public void beforeTextChanged(CharSequence s, int start, int count, int after){}
             public void onTextChanged(CharSequence s, int start, int before, int count){}
@@ -190,15 +206,17 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     private void submitForm() {
         // Submit your form here. your form is valid
         Toast.makeText(this, "Submitting form...", Toast.LENGTH_LONG).show();
+        PrimeThread p = new PrimeThread(); //create thread for database queries
+        p.start(); //start thread
     }
 
     private boolean checkValidation() {
         boolean ret = true;
 
-        if (!CustomerFormValidation.hasText(fNameTxtBx)) ret = false;
+        if (!CustomerFormValidation.hasText(firstName)) ret = false;
         if (!CustomerFormValidation.isEmailAddress(EmailAddress, true)) ret = false;
-        if (!CustomerFormValidation.isFirstName(fNameTxtBx, true)) ret = false;
-        if (!CustomerFormValidation.isLastName(lNameTxtBx, true)) ret = false;
+        if (!CustomerFormValidation.isFirstName(firstName, true)) ret = false;
+        if (!CustomerFormValidation.isLastName(lastName, true)) ret = false;
         /*if(CustomerFormValidation.hasText(HomeNumber) || !CustomerFormValidation.hasText(MobileNumber)){
             ret = false;
         }*/
@@ -211,4 +229,79 @@ public class NewCustomerFormActivity extends AppCompatActivity {
 
         return ret;
     }
+
+    private class APIRequest extends AsyncTask<Void, Void, String> {
+
+        Editable fName = firstName.getText();
+        Editable lName = lastName.getText();
+        Editable pAddress = postalAddress.getText();
+        Editable pSuburb = postalSuburb.getText();
+        Editable pCode = postalAreaCode.getText();
+        Editable hNumber = HomeNumber.getText();
+        Editable mNumber = MobileNumber.getText();
+        Editable email = EmailAddress.getText();
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            // Of course, you should comment the other CASES when testing one CASE
+            // CASE 2: For JSONObject parameter
+            String url = "http://10.0.2.2:1997/addcustomer";
+            JSONObject jsonBody;
+            String requestBody;
+            HttpURLConnection urlConnection = null;
+            try {
+                jsonBody = new JSONObject();
+                jsonBody.put("FirstName", fName);
+                jsonBody.put("LastName", lName);
+                jsonBody.put("PostalAddress", pAddress);
+                jsonBody.put("PostalSuburb", pSuburb);
+                jsonBody.put("PostalCode", pCode);
+                jsonBody.put("Phone", hNumber);
+                jsonBody.put("Mobile", mNumber);
+                jsonBody.put("Email", email);
+                //jsonBody.put("ReesCode", "null");
+                requestBody = Utils.buildPostParameters(jsonBody);
+                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
+                InputStream inputStream;
+                // get stream
+                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
+                    inputStream = urlConnection.getInputStream();
+                } else {
+                    inputStream = urlConnection.getErrorStream();
+                }
+                // parse stream
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String temp, response = "";
+                while ((temp = bufferedReader.readLine()) != null) {
+                    response += temp;
+                }
+                return response;
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            Log.i("Success","Form Submitted");
+        }
+    }
+
+        class PrimeThread extends Thread {
+
+        public void run() {
+
+            new APIRequest().execute();
+
+        }
+    }
+
 }
