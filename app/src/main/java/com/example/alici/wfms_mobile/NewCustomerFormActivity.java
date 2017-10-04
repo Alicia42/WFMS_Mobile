@@ -51,6 +51,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     private Button createCustomerBtn;
 
     public URL url;
+    public int customerID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -305,6 +306,60 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         }
     }
 
+    private class PostSale extends AsyncTask<Void, Void, String> {
+
+        Editable sAddress = address.getText();
+        Editable sSuburb = suburb.getText();
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            // Of course, you should comment the other CASES when testing one CASE
+            // CASE 2: For JSONObject parameter
+            String url = "http://10.0.2.2:1997/addsale";
+            JSONObject jsonBody;
+            String requestBody;
+            HttpURLConnection urlConnection = null;
+            try {
+                jsonBody = new JSONObject();
+                jsonBody.put("CustomerID", customerID);
+                jsonBody.put("SiteAddress", sAddress);
+                jsonBody.put("SiteSuburb", sSuburb);
+                //jsonBody.put("ReesCode", "null");
+                requestBody = Utils.buildPostParameters(jsonBody);
+                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
+                InputStream inputStream;
+                // get stream
+                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
+                    inputStream = urlConnection.getInputStream();
+                } else {
+                    inputStream = urlConnection.getErrorStream();
+                }
+                // parse stream
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String temp, response = "";
+                while ((temp = bufferedReader.readLine()) != null) {
+                    response += temp;
+                }
+                return response;
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            Log.i("Success","Sale created");
+        }
+    }
+
         class PrimeThread extends Thread {
 
         public void run() {
@@ -325,7 +380,10 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
                         Customer customer = new Customer();
-                        customer.getNewCustomer(response, email);
+                        customerID = customer.getNewCustomer(response, email);
+                        String toString = String.valueOf(customerID);
+                        Log.i("new customerID", toString);
+                        new PostSale().execute();
                     }
                 });
     }

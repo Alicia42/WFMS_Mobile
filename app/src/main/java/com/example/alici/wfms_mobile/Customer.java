@@ -170,8 +170,9 @@ public class Customer {
         }
     }
 
-    public void getNewCustomer(JSONArray response, Editable email) {
+    public int getNewCustomer(JSONArray response, Editable email) {
 
+        int custID = 0;
         ArrayList<Customer> customerArray = new ArrayList<Customer>();
 
         for (int i = 0; i < response.length(); i++) {
@@ -191,11 +192,14 @@ public class Customer {
                     Log.i("customerID", toString);
                     Log.i("email", customer.getEmail());
                     Log.i("found", "true");
+                    custID = customer.getCustomerID();
                 }
             } catch (Exception e) {
 
                 Log.i("Error", "Field is null");
             }
         }
+
+        return custID;
     }
 }

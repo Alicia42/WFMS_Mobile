@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewCustomerFormActivity"></activity>
+        <activity android:name=".NewCustomerFormActivity" />
+        <activity android:name=".Calendar_Activity" />
+        <activity android:name=".Calendar_Base_Activity"></activity>
     </application>
 
 </manifest>

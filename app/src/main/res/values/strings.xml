@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">WFMS_Mobile</string>
+    <string name="about_summary">Android Calendar View Demo V0.5.0</string>
+    <string name="about">About</string>
+    <string name="pick_summary">start with ACTION_PICK</string>
+    <string name="pick">Pick up a Date</string>
+    <string name="show_summary">start with ACTION_VIEW</string>
+    <string name="show">Show Calendar</string>
+    <string name="hint">Hint: touch the first or last day of month to move to previous or next month.</string>
+    <string name="action_today">Today</string>
+    <string name="action_day_view">Day view</string>
+    <string name="action_three_day_view">3 day view</string>
+    <string name="action_week_view">Week view</string>
+    <string name="title_activity_basic">Basic Example</string>
+    <string name="title_activity_asynchronous">Asynchronous Events</string>
+    <string name="async_error">Could not download events from the internet</string>
 </resources>

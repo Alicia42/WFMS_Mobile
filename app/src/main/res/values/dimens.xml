@@ -1,3 +1,10 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="week_top_margin">0px</dimen>
+    <dimen name="week_left_margin">40px</dimen>
+    <dimen name="cell_width">200px</dimen>
+    <dimen name="cell_height">190px</dimen>
+    <dimen name="cell_margin_top">300px</dimen>
+    <dimen name="cell_margin_left">39px</dimen>
+    <dimen name="cell_text_size">100px</dimen>
 </resources>
