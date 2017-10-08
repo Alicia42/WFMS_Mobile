@@ -29,7 +29,7 @@ public class DateTable {
         try {
 
             String DateValueString = object.getString("DateValue");
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-mm-dd");
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 DateValueUtil = sdf1.parse(DateValueString);
             } catch (java.text.ParseException e) {

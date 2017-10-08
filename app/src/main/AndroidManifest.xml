@@ -22,7 +22,8 @@
         </activity>
         <activity android:name=".NewCustomerFormActivity" />
         <activity android:name=".Calendar_Activity" />
-        <activity android:name=".Calendar_Base_Activity"></activity>
+        <activity android:name=".Calendar_Base_Activity" />
+        <activity android:name=".GetCalendarItems" />
     </application>
 
 </manifest>

@@ -108,7 +108,7 @@ public class Event {
         weekViewEvent.setName(getName());
         weekViewEvent.setStartTime(startTime);
         weekViewEvent.setEndTime(endTime);
-        weekViewEvent.setColor(Color.parseColor(getColor()));
+        weekViewEvent.setColor(Color.GREEN);
 
         return weekViewEvent;
     }

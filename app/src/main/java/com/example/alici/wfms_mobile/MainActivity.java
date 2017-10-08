@@ -91,11 +91,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         computeMD5Hash(passwordTxtBx.getText().toString());
         getAuthentication();
-        /*Intent intent = new Intent(this, NewCustomerFormActivity.class);
-        startActivity(intent);*/
-        //startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(null, CalendarActivity.MIME_TYPE));
-        Intent intent = new Intent(MainActivity.this, Calendar_Activity.class);
+        Intent intent = new Intent(this, NewCustomerFormActivity.class);
         startActivity(intent);
+        //startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(null, CalendarActivity.MIME_TYPE));
+        /*Intent intent = new Intent(MainActivity.this, Calendar_Activity.class);
+        startActivity(intent);*/
+        /*Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
+        startActivity(intent);*/
     }
 
     /*class PrimeThread extends Thread {
@@ -155,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getDates() {
 
+        load();
+
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
@@ -172,6 +176,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getTimes() {
+
+        load();
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
@@ -313,6 +319,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getSchedules() {
+
+        load();
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
