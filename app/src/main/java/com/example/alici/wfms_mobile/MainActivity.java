@@ -91,13 +91,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         computeMD5Hash(passwordTxtBx.getText().toString());
         getAuthentication();
-        Intent intent = new Intent(this, NewCustomerFormActivity.class);
-        startActivity(intent);
+        /*Intent intent = new Intent(this, NewCustomerFormActivity.class);
+        startActivity(intent);*/
         //startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(null, CalendarActivity.MIME_TYPE));
         /*Intent intent = new Intent(MainActivity.this, Calendar_Activity.class);
         startActivity(intent);*/
-        /*Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
-        startActivity(intent);*/
+        Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
+        startActivity(intent);
     }
 
     /*class PrimeThread extends Thread {

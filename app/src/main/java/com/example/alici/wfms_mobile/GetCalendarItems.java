@@ -44,7 +44,44 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                 matchedEvents.add(schedule);
         }
         Log.i("matched events", String.valueOf(matchedEvents.size()));*/
+
+        for (WeekViewEvent weekViewEvent : schedulesList) {
+            Log.i("Time", String.valueOf(weekViewEvent.getStartTime()));
+        }
+
+
         return schedulesList;
+
+        /*List<WeekViewEvent> events = new ArrayList<WeekViewEvent>();
+
+        Calendar startTime = Calendar.getInstance();
+        startTime.set(Calendar.HOUR_OF_DAY, 3);
+        startTime.set(Calendar.MINUTE, 0);
+        startTime.set(Calendar.MONTH, 9);
+        startTime.set(Calendar.YEAR, newYear);
+        Calendar endTime = (Calendar) startTime.clone();
+        endTime.add(Calendar.HOUR, 1);
+        endTime.set(Calendar.MONTH, 9);
+        WeekViewEvent event = new WeekViewEvent(1, getEventTitle(startTime), startTime, endTime);
+        event.setColor(getResources().getColor(R.color.event_color_01));
+        events.add(event);
+
+        Calendar startTime = Calendar.getInstance();
+        Calendar endTime = (Calendar) startTime.clone();
+
+
+        startTime = Calendar.getInstance();
+        startTime.set(2017, 9, 8, 6, 00);
+        endTime = Calendar.getInstance();
+        endTime.set(2017, 9, 8, 9, 00);
+        WeekViewEvent event2 = new WeekViewEvent(0,"00kjbhjbhjbjbhj",startTime, endTime);
+        event2.setColor(getResources().getColor(R.color.event_color_01));
+        events.add(event2);
+
+        Log.i("Date", String.valueOf(event2.getStartTime()));
+
+
+        return events;*/
     }
 
    /* private boolean eventMatches(WeekViewEvent event, int year, int month) {
@@ -73,11 +110,74 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
-                        Schedule schedule = new Schedule();
-                        schedulesList = schedule.convertSchedules(response);
+                        //Schedule schedule = new Schedule();
+                        schedulesList = convertSchedules(response);
                         Log.i("List Size", String.valueOf(schedulesList.size()));
 
                     }
                 });
+    }
+
+    public ArrayList<WeekViewEvent> convertSchedules(JSONArray response) {
+
+        ArrayList<Schedule> scheduleArrayList = new ArrayList<Schedule>();
+        ArrayList<WeekViewEvent> thisSchedulesList = new ArrayList<WeekViewEvent>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                scheduleArrayList.add(new Schedule(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Schedule schedule : scheduleArrayList) {
+
+            try {
+
+                java.sql.Date dat = schedule.getInstallDate();
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(dat);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+                int year = cal.get(Calendar.YEAR);
+
+                /*Calendar startTime = Calendar.getInstance();
+                startTime.set(Calendar.HOUR_OF_DAY, 3);
+                startTime.set(Calendar.MINUTE, 0);
+                startTime.set(Calendar.DAY_OF_MONTH, day);
+                startTime.set(Calendar.MONTH, month - 1);
+                startTime.set(Calendar.YEAR, year);
+                Calendar endTime = (Calendar) startTime.clone();
+                endTime.add(Calendar.HOUR, 1);
+                endTime.set(Calendar.MONTH, month - 1);
+                endTime.set(Calendar.DAY_OF_MONTH, day );
+                WeekViewEvent weekViewEvent = new WeekViewEvent(1, "hello", startTime, endTime);
+                weekViewEvent.setColor(getResources().getColor(R.color.event_color_01));
+                thisSchedulesList.add(weekViewEvent);*/
+
+                Calendar startTime = Calendar.getInstance();
+                Calendar endTime = (Calendar) startTime.clone();
+
+
+                startTime = Calendar.getInstance();
+                startTime.set(year, month, day, 6, 00);
+                endTime = Calendar.getInstance();
+                endTime.set(year, month, day, 9, 00);
+                WeekViewEvent event2 = new WeekViewEvent(0,"hello",startTime, endTime);
+                event2.setColor(getResources().getColor(R.color.event_color_01));
+                thisSchedulesList.add(event2);
+
+                //Log.i("Color", String.valueOf(event2.getColor()));
+                Log.i("Time", String.valueOf(event2.getStartTime()));
+
+            } catch (Exception e) {
+
+                Log.i("Error", e.toString());
+            }
+        }
+
+
+        return thisSchedulesList;
     }
 }
