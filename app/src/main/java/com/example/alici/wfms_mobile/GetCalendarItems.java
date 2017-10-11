@@ -27,7 +27,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
     public ArrayList<WeekViewEvent> schedulesList = new ArrayList<WeekViewEvent>();
     public ArrayList<Integer> saleIDArray = new ArrayList<Integer>();
     ArrayList<String> customerNameArray = new ArrayList<String>();
-    public int saleID;
+    public int customerNameArraySize = 0;
     public boolean update = false;
     public int count = 0;
 
@@ -93,7 +93,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                 });
     }
 
-    private void getInstalls() {
+    private void getInstalls(final ArrayList installIDArray) {
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
@@ -103,10 +103,23 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
-                        Install install = new Install();
+                        /*Install install = new Install();
                         saleIDArray = (ArrayList<Integer>) install.findSaleID(response);
                         //saleIDArray.add(saleID);
-                        getSales(saleIDArray);
+                        getSales(saleIDArray);*/
+
+                        ArrayList<Integer> saleIDArray = new ArrayList<Integer>();
+                        int saleID = 0;
+                        Install install = new Install();
+                        for (Object installID : installIDArray) {
+                            Install newInstall = new Install();
+                            newInstall.setInstallID((Integer) installID);
+                            saleID = install.findSaleID(response, newInstall.getInstallID());
+                            saleIDArray.add(saleID);
+
+                            getSales(saleIDArray);
+                            //Log.i("Customer size", String.valueOf(customerIDArray.size()));
+                        }
 
                     }
 
@@ -161,7 +174,8 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                             newCustomer.setCustomerID((Integer) customerID);
                             customerName = customer.findCustomer(response, newCustomer.getCustomerID());
                             customerNameArray.add(customerName);
-                            Log.i("Customer Name size", String.valueOf(customerNameArray.size()));
+                            customerNameArraySize = customerNameArray.size();
+                            //Log.i("Customer Name size", String.valueOf(customerNameArraySize));
                         }
                     }
                 });
@@ -172,6 +186,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
 
         ArrayList<Schedule> scheduleArrayList = new ArrayList<Schedule>();
         ArrayList<WeekViewEvent> thisSchedulesList = new ArrayList<WeekViewEvent>();
+        ArrayList<Integer> installIDArray = new ArrayList<Integer>();
 
         for (int i = 0; i < response.length(); i++) {
             try {
@@ -182,12 +197,18 @@ public class GetCalendarItems extends Calendar_Base_Activity {
         }
 
         for (Schedule schedule : scheduleArrayList) {
+            Install install = new Install();
+            install.setInstallID(schedule.getInstallID());
+            installIDArray.add(install.getInstallID());
+        }
+
+        for (Schedule schedule : scheduleArrayList) {
 
             try {
 
-                getInstalls();
+                getInstalls(installIDArray);
 
-                Log.i("Customer Name", customerNameArray.get(count));
+                //Log.i("Customer Name", customerNameArray.get(1));
 
                     java.sql.Date dat = schedule.getInstallDate();
                     Calendar cal = Calendar.getInstance();

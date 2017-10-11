@@ -191,7 +191,7 @@ public class Install {
         }
     }
 
-    public List findSaleID(JSONArray response){
+    public int findSaleID(JSONArray response, int installID){
 
         ArrayList<Install> installArrayList = new ArrayList<Install>();
         ArrayList<Integer> saleIDList = new ArrayList<Integer>();
@@ -205,31 +205,29 @@ public class Install {
             }
         }
 
-        for (Install install : installArrayList) {
+        for (Install install : installArrayList){
+
+            if (install.getInstallID() == installID){
+                saleID = install.getSaleID();
+                //Log.i("Sale", String.valueOf(saleID));
+            }
+        }
+
+        /*for (Install install : installArrayList) {
 
             try {
 
-                /*if(installID == install.getInstallID()) {
-                    String toString = String.valueOf(install.getSaleID());
-                    Log.i("Found Sale ID", toString);
-                    Log.i("Install ID", String.valueOf(installID));
-                    //Log.i("Install ID 2", String.valueOf(install.getInstallID()));
-                    saleIDList.add(install.getSaleID());
-                }
-                else {
-                    //Log.i("Sale ID", "no match");
-                }*/
-                //Log.i("Sale ID", String.valueOf(install.getSaleID()));
                 saleID = install.getSaleID();
+                Log.i("Sale ID", String.valueOf(saleID));
                 saleIDList.add(install.getSaleID());
             }
             catch (Exception e){
 
                 Log.i("Error","Field is null");
             }
-        }
+        }*/
 
-        return saleIDList;
+        return saleID;
     }
 
 }

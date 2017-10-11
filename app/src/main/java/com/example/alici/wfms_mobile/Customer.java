@@ -222,7 +222,7 @@ public class Customer {
             if (customer.getCustomerID() == customerID){
                 //Log.i("found", "found customer");
                 customerName = customer.getFirstName();
-                //Log.i("Customer", customerName);
+                Log.i("Customer", customerName);
             }
         }
 

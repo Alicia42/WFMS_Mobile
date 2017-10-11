@@ -242,39 +242,44 @@ public class Sale {
             SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-mm-dd");
             try {
                 DateValueUtil = sdf1.parse(SiteCheckDateString);
+                java.sql.Date DateValueSql = new java.sql.Date(DateValueUtil.getTime());
+                this.SiteCheckDate = DateValueSql;
             }
             catch (java.text.ParseException e){
-                Log.i("Error", "couldn't parse date");
-                Log.i("Error", e.getMessage());
+                //Log.i("Error", "couldn't parse date");
+                //Log.i("Error", e.getMessage());
             }
-            java.sql.Date DateValueSql = new java.sql.Date(DateValueUtil.getTime());
-            this.SiteCheckDate = DateValueSql;
 
             String SiteCheckTimeString = object.getString("SiteCheckTime");
             SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
             try {
                 TimeValueUtil = sdf2.parse(SiteCheckTimeString);
+                java.sql.Time TimeValueSql = new java.sql.Time(TimeValueUtil.getTime());
+                this.SiteCheckTime = TimeValueSql;
             }
             catch (java.text.ParseException e){
-                Log.i("Error", "couldn't parse date");
-                Log.i("Error", e.getMessage());
+                //Log.i("Error", "couldn't parse date");
+                //Log.i("Error", e.getMessage());
             }
-            java.sql.Time TimeValueSql = new java.sql.Time(TimeValueUtil.getTime());
-            this.SiteCheckTime = TimeValueSql;
 
             this.SiteCheckBy = object.getInt("SiteCheckBy");
-            this.SalesPerson = object.getInt("SalesPerson");
+            try {
+                this.SalesPerson = object.getInt("SalesPerson");
+            }
+            catch (Exception e){
+                //Log.i("Error", "couldn't parse int");
+            }
 
             String EstimationDateString = object.getString("EstimationDate");
             try {
                 DateValueUtil = sdf1.parse(EstimationDateString);
+                java.sql.Date EstimationDateSql = new java.sql.Date(DateValueUtil.getTime());
+                this.EstimationDate = EstimationDateSql;
             }
             catch (java.text.ParseException e){
-                Log.i("Error", "couldn't parse date");
-                Log.i("Error", e.getMessage());
+                //Log.i("Error", "couldn't parse date");
+                //Log.i("Error", e.getMessage());
             }
-            java.sql.Date EstimationDateSql = new java.sql.Date(DateValueUtil.getTime());
-            this.EstimationDate = EstimationDateSql;
 
             this.QuoteNumber = object.getString("QuoteNumber");
             this.SiteCheckPath = object.getString("SiteCheckPath");
@@ -284,13 +289,13 @@ public class Sale {
             String FollowUpDateString = object.getString("FollowUpDate");
             try {
                 DateValueUtil = sdf1.parse(FollowUpDateString);
+                java.sql.Date FollowUpDateSql = new java.sql.Date(DateValueUtil.getTime());
+                this.FollowUpDate = FollowUpDateSql;
             }
             catch (java.text.ParseException e){
-                Log.i("Error", "couldn't parse date");
-                Log.i("Error", e.getMessage());
+                //Log.i("Error", "couldn't parse date");
+                //Log.i("Error", e.getMessage());
             }
-            java.sql.Date FollowUpDateSql = new java.sql.Date(DateValueUtil.getTime());
-            this.FollowUpDate = FollowUpDateSql;
 
         } catch (JSONException e) {
             e.printStackTrace();
