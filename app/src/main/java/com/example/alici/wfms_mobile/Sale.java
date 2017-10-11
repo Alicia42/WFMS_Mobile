@@ -14,6 +14,8 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Sale {
 
@@ -347,4 +349,31 @@ public class Sale {
             }
         }
     }
+
+    public int findCustomerID(JSONArray response, Integer saleID){
+
+        ArrayList<Sale> saleArrayList = new ArrayList<Sale>();
+        ArrayList<Integer> customerIDList = new ArrayList<Integer>();
+        int customerID = 0;
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                saleArrayList.add(new Sale(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Sale sale : saleArrayList){
+
+            if (sale.getSaleID() == saleID){
+                //Log.i("found", "found");
+                //Log.i("Customer ID", String.valueOf(sale.getCustomerID()));
+                customerID = sale.getCustomerID();
+            }
+        }
+
+        return customerID;
+    }
+
 }

@@ -249,6 +249,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void getSales() {
 
+        load();
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
@@ -266,6 +267,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void getInstalls() {
+
+        load();
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));

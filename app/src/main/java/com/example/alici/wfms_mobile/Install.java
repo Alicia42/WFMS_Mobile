@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Install {
 
@@ -151,7 +152,7 @@ public class Install {
 
     public Install(){}
 
-    public void getInstalls(JSONArray response){
+    public void getInstalls(JSONArray response) {
 
         ArrayList<Install> installArrayList = new ArrayList<Install>();
 
@@ -183,12 +184,52 @@ public class Install {
                 String toStringComplete = String.valueOf(install.isInstallComplete());
                 Log.i("Install Complete", toStringComplete);
                 Log.i("Installer Note", install.getInstallerNote());
+            } catch (Exception e) {
+
+                Log.i("Error", "Field is null");
+            }
+        }
+    }
+
+    public List findSaleID(JSONArray response){
+
+        ArrayList<Install> installArrayList = new ArrayList<Install>();
+        ArrayList<Integer> saleIDList = new ArrayList<Integer>();
+        int saleID = 0;
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                installArrayList.add(new Install(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install install : installArrayList) {
+
+            try {
+
+                /*if(installID == install.getInstallID()) {
+                    String toString = String.valueOf(install.getSaleID());
+                    Log.i("Found Sale ID", toString);
+                    Log.i("Install ID", String.valueOf(installID));
+                    //Log.i("Install ID 2", String.valueOf(install.getInstallID()));
+                    saleIDList.add(install.getSaleID());
+                }
+                else {
+                    //Log.i("Sale ID", "no match");
+                }*/
+                //Log.i("Sale ID", String.valueOf(install.getSaleID()));
+                saleID = install.getSaleID();
+                saleIDList.add(install.getSaleID());
             }
             catch (Exception e){
 
                 Log.i("Error","Field is null");
             }
         }
+
+        return saleIDList;
     }
 
 }
