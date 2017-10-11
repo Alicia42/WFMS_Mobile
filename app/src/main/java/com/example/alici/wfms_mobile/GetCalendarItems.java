@@ -29,7 +29,6 @@ public class GetCalendarItems extends Calendar_Base_Activity {
     ArrayList<String> customerNameArray = new ArrayList<String>();
     public int customerNameArraySize = 0;
     public boolean update = false;
-    public int count = 0;
 
     @Override
     public List<? extends WeekViewEvent> onMonthChange(int newYear, int newMonth) {
@@ -202,14 +201,20 @@ public class GetCalendarItems extends Calendar_Base_Activity {
             installIDArray.add(install.getInstallID());
         }
 
+        int count = 0;
+        String concat = "";
+
         for (Schedule schedule : scheduleArrayList) {
 
             try {
 
                 getInstalls(installIDArray);
 
-                //Log.i("Customer Name", customerNameArray.get(1));
+                //Log.i("Customer Name", customerNameArray.get(count));
+                //Log.i("Customer Name Size", String.valueOf(customerNameArray.size()));
 
+
+                concat = customerNameArray.get(count) + "'s House";
                     java.sql.Date dat = schedule.getInstallDate();
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(dat);
@@ -226,7 +231,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         startTime.set(year, month, day, 9, 00);
                         endTime = Calendar.getInstance();
                         endTime.set(year, month, day, 13, 00);
-                        WeekViewEvent event2 = new WeekViewEvent(0, "hello AM", startTime, endTime);
+                        WeekViewEvent event2 = new WeekViewEvent(0, concat, startTime, endTime);
                         event2.setColor(getResources().getColor(R.color.event_color_01));
                         thisSchedulesList.add(event2);
 
@@ -236,7 +241,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         startTime.set(year, month, day, 14, 00);
                         endTime = Calendar.getInstance();
                         endTime.set(year, month, day, 18, 00);
-                        WeekViewEvent event2 = new WeekViewEvent(0, "hello PM", startTime, endTime);
+                        WeekViewEvent event2 = new WeekViewEvent(0, concat, startTime, endTime);
                         event2.setColor(getResources().getColor(R.color.event_color_02));
                         thisSchedulesList.add(event2);
                 }
