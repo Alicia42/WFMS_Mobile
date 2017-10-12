@@ -93,9 +93,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getAuthentication();
         /*Intent intent = new Intent(this, NewCustomerFormActivity.class);
         startActivity(intent);*/
-        //startActivity(new Intent(Intent.ACTION_VIEW).setDataAndType(null, CalendarActivity.MIME_TYPE));
-        /*Intent intent = new Intent(MainActivity.this, Calendar_Activity.class);
-        startActivity(intent);*/
         Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
         startActivity(intent);
     }

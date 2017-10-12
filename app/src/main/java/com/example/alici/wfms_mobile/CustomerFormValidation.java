@@ -27,7 +27,7 @@ public class CustomerFormValidation {
     private static final String Last_Name_MSG = "invalid last name";
     private static final String Home_Phone_MSG = "invalid home phone number (e.g. 091234567)";
     private static final String Mobile_Phone_MSG = "invalid mobile phone number (e.g. 0212345678)";
-    private static final String Address_MSG = "invalid address (e.g. 10 Fake Street)";
+    private static final String Address_MSG = "invalid address, must be less than 30 characters";
     private static final String Suburb_MSG = "invalid suburb (e.g. Henderson)";
     private static final String Area_Code_MSG = "invalid area code (e.g. 1234)";
 
@@ -58,7 +58,7 @@ public class CustomerFormValidation {
 
     // call this method when you need to check address validation
     public static boolean isAddress(EditText editText, boolean required) {
-        return isValid(editText, Address_Regex, Address_MSG, required);
+        return isAddressValid(editText, Address_MSG, required);
     }
 
     // call this method when you need to check suburb validation
@@ -76,6 +76,22 @@ public class CustomerFormValidation {
     // call this method when you need to check area code validation
     public static boolean isAreaCode(EditText editText, boolean required) {
         return isValid(editText, Area_Code_Regex, Area_Code_MSG, required);
+    }
+
+    // return true if the input field is valid, based on the parameter passed
+    public static boolean isAddressValid(EditText editText, String errMsg, boolean required) {
+
+        String text = editText.getText().toString().trim();
+        // clearing the error, if it was previously set by some other values
+        editText.setError(null);
+
+        // text required and editText is blank, so return false
+        if ( required && !hasText(editText) ) return false;
+
+
+        if ( required && !lessThanLimit(editText) ) return false;
+
+        return true;
     }
 
     // return true if the input field is valid, based on the parameter passed
@@ -107,6 +123,19 @@ public class CustomerFormValidation {
         // length 0 means there is no text
         if (text.length() == 0) {
             editText.setError(REQUIRED_MSG);
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean lessThanLimit(EditText editText) {
+
+        String text = editText.getText().toString().trim();
+        editText.setError(null);
+
+        if (text.length() >= 30) {
+            editText.setError(Address_MSG);
             return false;
         }
 

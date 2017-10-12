@@ -1,5 +1,6 @@
 package com.example.alici.wfms_mobile;
 
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,7 +33,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.impl.execchain.MainClientExec;
 import cz.msebera.android.httpclient.message.BasicHeader;
+
+import android.content.Context;
+import android.os.Build;
+import android.content.DialogInterface;
+import android.content.Intent;
 
 public class NewCustomerFormActivity extends AppCompatActivity {
 
@@ -310,6 +317,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
 
         Editable sAddress = address.getText();
         Editable sSuburb = suburb.getText();
+        Editable fName = firstName.getText();
 
         @Override
         protected String doInBackground(Void... params) {
@@ -357,6 +365,31 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
             Log.i("Success","Sale created");
+
+            Context context = getApplicationContext();
+            /*CharSequence text = "Thank you for registering " + firstName;
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();*/
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
+            } else {
+                builder = new AlertDialog.Builder(context);
+            }
+            builder.setTitle("Registration Complete!")
+                    .setMessage("Thank you for registering, " + fName)
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    })
+                    //.setIcon(android.R.drawable.d)
+                    .show();
         }
     }
 
