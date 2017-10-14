@@ -228,4 +228,32 @@ public class Customer {
 
         return customerName;
     }
+
+
+    public ArrayList findCustomerDetails(JSONArray response, Integer customerID){
+
+        ArrayList<Customer> customerArray = new ArrayList<Customer>();
+        ArrayList<Customer> customerDetailsList = new ArrayList<Customer>();
+        String customerName = "";
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                customerArray.add(new Customer(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Customer customer : customerArray){
+
+            if (customer.getCustomerID() == customerID){
+                //Log.i("found", "found customer");
+                customerName = customer.getFirstName();
+                //Log.i("Customer", customerName);
+                customerDetailsList.add(customer);
+            }
+        }
+
+        return customerDetailsList;
+    }
 }

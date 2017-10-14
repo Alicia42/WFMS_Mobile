@@ -7,4 +7,6 @@
     <dimen name="cell_margin_top">300px</dimen>
     <dimen name="cell_margin_left">39px</dimen>
     <dimen name="cell_text_size">100px</dimen>
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
 </resources>

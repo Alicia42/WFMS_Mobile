@@ -233,6 +233,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         endTime.set(year, month, day, 13, 00);
                         WeekViewEvent event2 = new WeekViewEvent(0, concat, startTime, endTime);
                         event2.setColor(getResources().getColor(R.color.event_color_01));
+                        event2.setId(installIDArray.get(count));
                         thisSchedulesList.add(event2);
 
                     } else {
@@ -243,6 +244,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         endTime.set(year, month, day, 18, 00);
                         WeekViewEvent event2 = new WeekViewEvent(0, concat, startTime, endTime);
                         event2.setColor(getResources().getColor(R.color.event_color_02));
+                        event2.setId(installIDArray.get(count));
                         thisSchedulesList.add(event2);
                 }
                 count++;
@@ -257,5 +259,9 @@ public class GetCalendarItems extends Calendar_Base_Activity {
         }
 
         return thisSchedulesList;
+    }
+
+    public ArrayList<String> returnCustomerName(){
+        return customerNameArray;
     }
 }

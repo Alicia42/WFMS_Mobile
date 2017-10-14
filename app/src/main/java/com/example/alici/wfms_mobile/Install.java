@@ -213,20 +213,6 @@ public class Install {
             }
         }
 
-        /*for (Install install : installArrayList) {
-
-            try {
-
-                saleID = install.getSaleID();
-                Log.i("Sale ID", String.valueOf(saleID));
-                saleIDList.add(install.getSaleID());
-            }
-            catch (Exception e){
-
-                Log.i("Error","Field is null");
-            }
-        }*/
-
         return saleID;
     }
 

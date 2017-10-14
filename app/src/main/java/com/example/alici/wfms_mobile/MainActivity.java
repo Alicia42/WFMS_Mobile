@@ -95,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivity(intent);*/
         Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
         startActivity(intent);
+        /*Intent intent = new Intent(MainActivity.this, BookingDetailsActivity.class);
+        startActivity(intent);*/
     }
 
     /*class PrimeThread extends Thread {

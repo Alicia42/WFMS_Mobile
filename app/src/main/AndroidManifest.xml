@@ -20,11 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".NewCustomerFormActivity"
-            android:theme="@style/Theme.AppCompat.Light"/>
+        <activity
+            android:name=".NewCustomerFormActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity android:name=".Calendar_Activity" />
         <activity android:name=".Calendar_Base_Activity" />
         <activity android:name=".GetCalendarItems" />
+        <activity android:name=".BookingDetailsActivity"></activity>
     </application>
 
 </manifest>

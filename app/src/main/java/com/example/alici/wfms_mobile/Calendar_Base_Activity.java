@@ -9,6 +9,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import android.content.Intent;
 
 import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.MonthLoader;
@@ -144,6 +145,12 @@ public abstract class Calendar_Base_Activity extends AppCompatActivity implement
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
         Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(Calendar_Base_Activity.this, BookingDetailsActivity.class);
+        Bundle extras = new Bundle();
+        extras.putString("customerName", event.getName());
+        extras.putString("installID", String.valueOf(event.getId()));
+        intent.putExtras(extras);
+        startActivity(intent);
     }
 
     @Override
