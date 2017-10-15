@@ -1,14 +1,20 @@
 package com.example.alici.wfms_mobile;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -29,6 +35,8 @@ import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
 
 import android.widget.CompoundButton;
+import android.view.View;
+import android.content.Intent;
 
 public class BookingDetailsActivity extends AppCompatActivity {
 
@@ -43,12 +51,15 @@ public class BookingDetailsActivity extends AppCompatActivity {
     public TextView installType;
     public CheckBox completed;
     public CheckBox uncomplete;
+    public ImageView homePhone;
     public String installID = "";
     public int installIDInt = 0;
     public int saleID = 0;
     public int customerID = 0;
     public int installTypeID = 0;
     public boolean installComplete = false;
+
+    private static final int REQUEST_PHONE_CALL = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +77,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
         try {
             installIDInt = Integer.parseInt(installID);
-        } catch(NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             System.out.println("Could not parse " + nfe);
         }
 
@@ -79,8 +90,49 @@ public class BookingDetailsActivity extends AppCompatActivity {
         completed = (CheckBox) findViewById(R.id.completeCheckBx);
         uncomplete = (CheckBox) findViewById(R.id.unCompleteChkBx);
 
+        homePhone = (ImageView) findViewById(R.id.homePhoneImgVw);
+
+        homePhone.setOnClickListener(new View.OnClickListener() {
+            //@Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+918511812660"));
+
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+                    }
+                    else
+                    {
+                        startActivity(intent);
+                    }
+                }
+                else
+                {
+                    startActivity(intent);
+                }
+            }
+        });
+
         getInstalls();
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PHONE_CALL : {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
+
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
+                        startActivity(intent);
+                    }
+                }
+            }
+        }
     }
 
     private void getInstalls() {
