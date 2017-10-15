@@ -113,4 +113,29 @@ public class Install_Type {
             }
         }
     }
+
+    public String findInstallType(JSONArray response, Integer installTypeID){
+
+        String installDescription = "";
+
+        ArrayList<Install_Type> install_typeArrayList = new ArrayList<Install_Type>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                install_typeArrayList.add(new Install_Type(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install_Type install : install_typeArrayList){
+
+            if (install.getInstallTypeID() == installTypeID){
+                installDescription = install.getInstallDescription();
+                Log.i("Install Description", installDescription);
+            }
+        }
+
+        return installDescription;
+    }
 }

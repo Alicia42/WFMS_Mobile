@@ -216,4 +216,28 @@ public class Install {
         return saleID;
     }
 
+    public boolean findInstallCompletion(JSONArray response, int installID){
+
+        ArrayList<Install> installArrayList = new ArrayList<Install>();
+        boolean installationComplete = false;
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                installArrayList.add(new Install(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install install : installArrayList){
+
+            if (install.getInstallID() == installID){
+                installationComplete = install.isInstallComplete();
+                //Log.i("Sale", String.valueOf(saleID));
+            }
+        }
+
+        return installationComplete;
+    }
+
 }

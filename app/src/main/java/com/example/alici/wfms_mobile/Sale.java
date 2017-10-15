@@ -381,4 +381,28 @@ public class Sale {
         return customerID;
     }
 
+    public int findInstallTypeID(JSONArray response, Integer saleID){
+
+        ArrayList<Sale> saleArrayList = new ArrayList<Sale>();
+        int installTypeID = 0;
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                saleArrayList.add(new Sale(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Sale sale : saleArrayList){
+
+            if (sale.getSaleID() == saleID){
+                //Log.i("InstallType ID", String.valueOf(sale.getInstallTypeID()));
+                installTypeID = sale.getInstallTypeID();
+            }
+        }
+
+        return installTypeID;
+    }
+
 }
