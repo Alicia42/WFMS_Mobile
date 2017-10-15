@@ -52,6 +52,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     public CheckBox completed;
     public CheckBox uncomplete;
     public ImageView homePhone;
+    public ImageView mobilePhone;
     public String installID = "";
     public int installIDInt = 0;
     public int saleID = 0;
@@ -91,27 +92,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         uncomplete = (CheckBox) findViewById(R.id.unCompleteChkBx);
 
         homePhone = (ImageView) findViewById(R.id.homePhoneImgVw);
-
-        homePhone.setOnClickListener(new View.OnClickListener() {
-            //@Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + "+918511812660"));
-
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
-                    }
-                    else
-                    {
-                        startActivity(intent);
-                    }
-                }
-                else
-                {
-                    startActivity(intent);
-                }
-            }
-        });
+        mobilePhone = (ImageView) findViewById(R.id.mobilePhoneImgVw);
 
         getInstalls();
 
@@ -241,6 +222,48 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                             emailAddress.setText(thisCustomer.getEmail());
                         }
+
+                        homePhone.setOnClickListener(new View.OnClickListener() {
+                            //@Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
+
+                                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+                                    }
+                                    else
+                                    {
+                                        startActivity(intent);
+                                    }
+                                }
+                                else
+                                {
+                                    startActivity(intent);
+                                }
+                            }
+                        });
+
+                        mobilePhone.setOnClickListener(new View.OnClickListener() {
+                            //@Override
+                            public void onClick(View v) {
+                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
+
+                                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+                                    }
+                                    else
+                                    {
+                                        startActivity(intent);
+                                    }
+                                }
+                                else
+                                {
+                                    startActivity(intent);
+                                }
+                            }
+                        });
 
                         getInstallTypes();
 
