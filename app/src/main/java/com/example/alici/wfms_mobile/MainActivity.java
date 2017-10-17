@@ -91,10 +91,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         computeMD5Hash(passwordTxtBx.getText().toString());
         getAuthentication();
-        /*Intent intent = new Intent(this, NewCustomerFormActivity.class);
-        startActivity(intent);*/
-        Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
+        Intent intent = new Intent(this, NewCustomerFormActivity.class);
         startActivity(intent);
+        /*Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
+        startActivity(intent);*/
         /*Intent intent = new Intent(MainActivity.this, BookingDetailsActivity.class);
         startActivity(intent);*/
     }

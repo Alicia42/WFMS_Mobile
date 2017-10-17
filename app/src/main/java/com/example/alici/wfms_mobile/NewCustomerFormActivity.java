@@ -220,13 +220,6 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         });
     }
 
-    private void submitForm() {
-        // Submit your form here. your form is valid
-        Toast.makeText(this, "Submitting form...", Toast.LENGTH_LONG).show();
-        PrimeThread p = new PrimeThread(); //create thread for database queries
-        p.start(); //start thread
-    }
-
     private boolean checkValidation() {
         boolean ret = true;
 
@@ -247,6 +240,22 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         return ret;
     }
 
+    private void submitForm() {
+        // Submit your form here. your form is valid
+        Toast.makeText(this, "Submitting form...", Toast.LENGTH_LONG).show();
+        PrimeThread p = new PrimeThread(); //create thread for database queries
+        p.start(); //start thread
+    }
+
+    class PrimeThread extends Thread {
+
+        public void run() {
+
+            new PostCustomer().execute();
+
+        }
+    }
+
     private class PostCustomer extends AsyncTask<Void, Void, String> {
 
         Editable fName = firstName.getText();
@@ -257,13 +266,15 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         Editable hNumber = HomeNumber.getText();
         Editable mNumber = MobileNumber.getText();
         Editable email = EmailAddress.getText();
+        Editable sAddress = address.getText();
+        Editable sSuburb = suburb.getText();
 
         @Override
         protected String doInBackground(Void... params) {
 
             // Of course, you should comment the other CASES when testing one CASE
             // CASE 2: For JSONObject parameter
-            String url = "http://10.0.2.2:1997/addcustomer";
+            String url = "http://10.0.2.2:1997/addcustomersale";
             JSONObject jsonBody;
             String requestBody;
             HttpURLConnection urlConnection = null;
@@ -277,60 +288,6 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                 jsonBody.put("Phone", hNumber);
                 jsonBody.put("Mobile", mNumber);
                 jsonBody.put("Email", email);
-                //jsonBody.put("ReesCode", "null");
-                requestBody = Utils.buildPostParameters(jsonBody);
-                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
-                InputStream inputStream;
-                // get stream
-                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
-                    inputStream = urlConnection.getInputStream();
-                } else {
-                    inputStream = urlConnection.getErrorStream();
-                }
-                // parse stream
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp, response = "";
-                while ((temp = bufferedReader.readLine()) != null) {
-                    response += temp;
-                }
-                return response;
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-                return e.toString();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-            Log.i("Success","Form Submitted");
-            getCustomer(email); //find customer ID of new customer with the email address
-        }
-    }
-
-    private class PostSale extends AsyncTask<Void, Void, String> {
-
-        Editable sAddress = address.getText();
-        Editable sSuburb = suburb.getText();
-        Editable fName = firstName.getText();
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            // Of course, you should comment the other CASES when testing one CASE
-            // CASE 2: For JSONObject parameter
-            String url = "http://10.0.2.2:1997/addsale";
-            JSONObject jsonBody;
-            String requestBody;
-            HttpURLConnection urlConnection = null;
-            try {
-                jsonBody = new JSONObject();
-                jsonBody.put("CustomerID", customerID);
                 jsonBody.put("SiteAddress", sAddress);
                 jsonBody.put("SiteSuburb", sSuburb);
                 //jsonBody.put("ReesCode", "null");
@@ -364,15 +321,8 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
-            Log.i("Success","Sale created");
-
+            Log.i("Success","Form Submitted");
             Context context = getApplicationContext();
-            /*CharSequence text = "Thank you for registering " + firstName;
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();*/
-
             AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
@@ -391,34 +341,6 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                     //.setIcon(android.R.drawable.d)
                     .show();
         }
-    }
-
-        class PrimeThread extends Thread {
-
-        public void run() {
-
-            new PostCustomer().execute();
-
-        }
-    }
-
-    private void getCustomer(final Editable email) {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(NewCustomerFormActivity.this, "/getnewcustomer", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Customer customer = new Customer();
-                        customerID = customer.getNewCustomer(response, email);
-                        String toString = String.valueOf(customerID);
-                        Log.i("new customerID", toString);
-                        new PostSale().execute();
-                    }
-                });
     }
 
 }
