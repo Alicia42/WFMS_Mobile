@@ -4,6 +4,7 @@ package com.example.alici.wfms_mobile;
  * Created by libbyjennings on 6/10/17.
  */
 
+import android.app.ProgressDialog;
 import android.util.Log;
 
 import com.alamkanak.weekview.WeekViewEvent;
@@ -210,10 +211,6 @@ public class GetCalendarItems extends Calendar_Base_Activity {
 
                 getInstalls(installIDArray);
 
-                //Log.i("Customer Name", customerNameArray.get(count));
-                //Log.i("Customer Name Size", String.valueOf(customerNameArray.size()));
-
-
                 concat = customerNameArray.get(count) + "'s House";
                     java.sql.Date dat = schedule.getInstallDate();
                     Calendar cal = Calendar.getInstance();
@@ -259,9 +256,5 @@ public class GetCalendarItems extends Calendar_Base_Activity {
         }
 
         return thisSchedulesList;
-    }
-
-    public ArrayList<String> returnCustomerName(){
-        return customerNameArray;
     }
 }

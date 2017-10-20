@@ -27,7 +27,6 @@ public class Customer {
     private String Phone;
     private String Mobile;
     private String Email;
-    private String ReesCode;
 
     public Customer(JSONObject object) {
         try {
@@ -40,7 +39,6 @@ public class Customer {
             this.Phone = object.getString("Phone");
             this.Mobile = object.getString("Mobile");
             this.Email = object.getString("Email");
-            this.ReesCode = object.getString("ReesCode");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -91,9 +89,6 @@ public class Customer {
         return this.Email;
     }
 
-    public String getReesCode() {
-        return this.ReesCode;
-    }
 
     public void setPostalCode(String postalCode) {
         PostalCode = postalCode;
@@ -109,10 +104,6 @@ public class Customer {
 
     public void setEmail(String email) {
         Email = email;
-    }
-
-    public void setReesCode(String reesCode) {
-        ReesCode = reesCode;
     }
 
     public void setPostalSuburb(String postalSuburb) {
@@ -162,7 +153,6 @@ public class Customer {
                 Log.i("phone", customer.getPhone());
                 Log.i("mobile", customer.getMobile());
                 Log.i("email", customer.getEmail());
-                Log.i("rees code", customer.getReesCode());
             } catch (Exception e) {
 
                 Log.i("Error", "Field is null");
@@ -256,4 +246,5 @@ public class Customer {
 
         return customerDetailsList;
     }
+
 }

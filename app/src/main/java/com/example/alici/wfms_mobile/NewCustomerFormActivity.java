@@ -275,6 +275,8 @@ public class NewCustomerFormActivity extends AppCompatActivity {
             // Of course, you should comment the other CASES when testing one CASE
             // CASE 2: For JSONObject parameter
             String url = "http://10.0.2.2:1997/addcustomersale";
+            //uncomment the next line to add customer from cloud web service
+            //String url = "http://52.65.97.218:1997/addcustomersale";
             JSONObject jsonBody;
             String requestBody;
             HttpURLConnection urlConnection = null;

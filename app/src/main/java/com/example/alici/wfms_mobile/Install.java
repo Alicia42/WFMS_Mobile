@@ -20,12 +20,8 @@ public class Install {
 
     private int InstallID;
     private int SaleID;
-    private String InstallStatus;
-    private boolean OrderChecked;
+    private String FireID;
     private String InstallerID;
-    private Date InstallDate;
-    private String InstallTime;
-    private int PartsReady;
     private String NoteToInstaller;
     private boolean InstallComplete;
     private String InstallerNote;
@@ -46,22 +42,6 @@ public class Install {
         SaleID = saleID;
     }
 
-    public String getInstallStatus() {
-        return InstallStatus;
-    }
-
-    public void setInstallStatus(String installStatus) {
-        InstallStatus = installStatus;
-    }
-
-    public boolean isOrderChecked() {
-        return OrderChecked;
-    }
-
-    public void setOrderChecked(boolean orderChecked) {
-        OrderChecked = orderChecked;
-    }
-
     public String getInstallerID() {
         return InstallerID;
     }
@@ -70,29 +50,6 @@ public class Install {
         InstallerID = installerID;
     }
 
-    public Date getInstallDate() {
-        return InstallDate;
-    }
-
-    public void setInstallDate(Date installDate) {
-        InstallDate = installDate;
-    }
-
-    public String getInstallTime() {
-        return InstallTime;
-    }
-
-    public void setInstallTime(String installTime) {
-        InstallTime = installTime;
-    }
-
-    public int getPartsReady() {
-        return PartsReady;
-    }
-
-    public void setPartsReady(int partsReady) {
-        PartsReady = partsReady;
-    }
 
     public String getNoteToInstaller() {
         return NoteToInstaller;
@@ -118,28 +75,20 @@ public class Install {
         InstallerNote = installerNote;
     }
 
+    public String getFireID() {
+        return FireID;
+    }
+
+    public void setFireID(String fireID) {
+        FireID = fireID;
+    }
+
     public Install(JSONObject object) {
         try {
             this.InstallID = object.getInt("InstallID");
             this.SaleID = object.getInt("SaleID");
-            this.InstallStatus = object.getString("InstallStatus");
-            this.OrderChecked = object.getBoolean("OrderChecked");
+            this.FireID = object.getString("FireID");
             this.InstallerID = object.getString("InstallerID");
-
-            String InstallDateString = object.getString("InstallDate");
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-mm-dd");
-            try {
-                DateValueUtil = sdf1.parse(InstallDateString);
-            }
-            catch (java.text.ParseException e){
-                Log.i("Error", "couldn't parse date");
-                Log.i("Error", e.getMessage());
-            }
-            java.sql.Date DateValueSql = new java.sql.Date(DateValueUtil.getTime());
-
-            this.InstallDate = DateValueSql;
-            this.InstallTime = object.getString("InstallTime");
-            this.PartsReady = object.getInt("PartsReady");
             this.NoteToInstaller = object.getString("NoteToInstaller");
             this.InstallComplete = object.getBoolean("InstallComplete");
             this.InstallerNote = object.getString("InstallerNote");
@@ -171,14 +120,8 @@ public class Install {
                 Log.i("Install ID", toStringInstall);
                 String toString = String.valueOf(install.getSaleID());
                 Log.i("Sale ID", toString);
-                Log.i("Install Status", install.getInstallStatus());
-                String toStringChecked = String.valueOf(install.isOrderChecked());
-                Log.i("Order Checked", toStringChecked);
                 Log.i("Installer ID", install.getInstallerID());
-                Log.i("Install Date", install.getInstallDate().toString());
-                Log.i("Install Time", install.getInstallTime());
-                String toStringParts = String.valueOf(install.getPartsReady());
-                Log.i("Parts Ready", toStringParts);
+                Log.i("Fire ID", install.getFireID());
                 Log.i("Note to Installer", install.getNoteToInstaller());
                 Log.i("Installer ID", install.getInstallerID());
                 String toStringComplete = String.valueOf(install.isInstallComplete());
@@ -214,6 +157,53 @@ public class Install {
         }
 
         return saleID;
+    }
+
+    public String findFireID(JSONArray response, int installID){
+
+        ArrayList<Install> installArrayList = new ArrayList<Install>();
+        String fireID = "";
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                installArrayList.add(new Install(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install install : installArrayList){
+
+            if (install.getInstallID() == installID){
+                fireID = install.getFireID();
+                //Log.i("Sale", String.valueOf(saleID));
+            }
+        }
+
+        return fireID;
+    }
+
+    public String findNoteToInstaller(JSONArray response, int installID){
+
+        ArrayList<Install> installArrayList = new ArrayList<Install>();
+        String noteToInstaller = "";
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                installArrayList.add(new Install(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install install : installArrayList){
+
+            if (install.getInstallID() == installID){
+                noteToInstaller = install.getNoteToInstaller();
+            }
+        }
+
+        return noteToInstaller;
     }
 
     public boolean findInstallCompletion(JSONArray response, int installID){

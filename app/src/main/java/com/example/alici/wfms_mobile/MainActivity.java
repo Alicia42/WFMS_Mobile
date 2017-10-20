@@ -1,5 +1,6 @@
 package com.example.alici.wfms_mobile;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +21,7 @@ import java.security.NoSuchAlgorithmException;
 import java.io.IOException;
 import android.util.Base64;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.UnsupportedEncodingException;
 
@@ -28,14 +30,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public BooVariable bv;
     private String SHAHash;
     public static int NO_OPTIONS=0;
+    private EditText username;
     private EditText passwordTxtBx;
     public String md5Hash;
+    public String usernameString;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        username = (EditText) findViewById(R.id.usernameTxtBx);
         passwordTxtBx = (EditText) findViewById(R.id.passwordTxtBx);
 
         Button loginBtn = (Button) findViewById(R.id.loginBtn);
@@ -89,10 +94,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
 
-        computeMD5Hash(passwordTxtBx.getText().toString());
-        getAuthentication();
-        Intent intent = new Intent(this, NewCustomerFormActivity.class);
-        startActivity(intent);
+        usernameString = String.valueOf(username.getText());
+        computeMD5Hash(passwordTxtBx.getText().toString() + usernameString);
+        getUserAccounts();
+        /*Intent intent = new Intent(this, NewCustomerFormActivity.class);
+        startActivity(intent);*/
         /*Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
         startActivity(intent);*/
         /*Intent intent = new Intent(MainActivity.this, BookingDetailsActivity.class);
@@ -131,6 +137,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dialog.cancel(); //stop progress wheel
             }
         });
+    }
+
+    private void getUserAccounts() {
+
+        load();
+
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Accept", "application/json"));
+
+        WCHRestClient.get(MainActivity.this, "/getuseraccounts", headers.toArray(new Header[headers.size()]),
+                null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                        User_Account user_account = new User_Account();
+                        if(user_account.checkLoginDetails(response, md5Hash, usernameString)){
+
+                            String roleType = user_account.getRoleType(response, md5Hash, usernameString);
+
+                            if(roleType.equals("Salesperson") || roleType.equals("Shop")) {
+                                Intent intent = new Intent(MainActivity.this, NewCustomerFormActivity.class);
+                                startActivity(intent);
+                                username.setText("");
+                                passwordTxtBx.setText("");
+                            }
+                            if(roleType.equals("Installer")){
+                                Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
+                                startActivity(intent);
+                                username.setText("");
+                                passwordTxtBx.setText("");
+                            }
+                            if(roleType.equals("Admin")) {
+                                Context context = getApplicationContext();
+                                CharSequence text = "Please sign in as either a Salesperson, Shop or Installer";
+                                int duration = Toast.LENGTH_SHORT;
+
+                                Toast toast = Toast.makeText(context, text, duration);
+                                toast.show();
+                            }
+                        }
+                        else {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Incorrect Login Details";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+
+                    }
+                });
+        bv.setBoo(true);
+    }
+
+    private void getAuthentication() {
+
+        load();
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Accept", "application/json"));
+
+        WCHRestClient.get(MainActivity.this, "/getauthentication", headers.toArray(new Header[headers.size()]),
+                null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                        Authenticate authenticate = new Authenticate();
+                        authenticate.getAuthentication(response, md5Hash);
+                    }
+                });
+        bv.setBoo(true);
     }
 
     private void getCustomers() {
@@ -194,40 +270,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bv.setBoo(true);
     }
 
-    private void getAuthentication() {
-
-        load();
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getauthentication", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Authenticate authenticate = new Authenticate();
-                        authenticate.getAuthentication(response, md5Hash);
-                    }
-                });
-        bv.setBoo(true);
-    }
-
-    private void getUserAccounts() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getuseraccounts", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        User_Account user_account = new User_Account();
-                       user_account.getUserAccounts(response);
-                    }
-                });
-        bv.setBoo(true);
-    }
 
     private void getInstallTypes() {
 

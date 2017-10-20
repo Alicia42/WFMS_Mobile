@@ -1,6 +1,7 @@
 package com.example.alici.wfms_mobile;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
@@ -12,8 +13,11 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,6 +34,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -37,28 +42,37 @@ import cz.msebera.android.httpclient.message.BasicHeader;
 import android.widget.CompoundButton;
 import android.view.View;
 import android.content.Intent;
+import android.widget.Toast;
 
 public class BookingDetailsActivity extends AppCompatActivity {
 
     ArrayList<String> customerNameArray = new ArrayList<String>();
     ArrayList<Customer> customerDetailsList = new ArrayList<Customer>();
+    ArrayList<Sale> saleSiteAddress = new ArrayList<Sale>();
     public TextView customerFirstLastName;
     public TextView invoiceNum;
     public TextView address;
     public TextView homePhoneNumber;
     public TextView mobilePhoneNumber;
     public TextView emailAddress;
+    public TextView fireType;
     public TextView installType;
+    public TextView noteToInstaller;
     public CheckBox completed;
     public CheckBox uncomplete;
     public ImageView homePhone;
     public ImageView mobilePhone;
+    public EditText installerNote;
+    public Button submit;
     public String installID = "";
     public int installIDInt = 0;
     public int saleID = 0;
+    public String fireID = "";
     public int customerID = 0;
     public int installTypeID = 0;
     public boolean installComplete = false;
+    public BooVariable bv;
+    public String note = "";
 
     private static final int REQUEST_PHONE_CALL = 1;
 
@@ -66,9 +80,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_details);
-
-        /*Bundle b = getIntent().getExtras();
-        custName = b.getString("customerName");*/
 
         Bundle bundle = getIntent().getExtras();
         installID = bundle.getString("installID");
@@ -82,17 +93,44 @@ public class BookingDetailsActivity extends AppCompatActivity {
             System.out.println("Could not parse " + nfe);
         }
 
+
         customerFirstLastName = (TextView) findViewById(R.id.custNameTxtBx);
         address = (TextView) findViewById(R.id.addressTxtBx);
         homePhoneNumber = (TextView) findViewById(R.id.homePhoneNumTxtBx);
         mobilePhoneNumber = (TextView) findViewById(R.id.mobilePhoneNumberTxtBx);
         emailAddress = (TextView) findViewById(R.id.emailTxtBx);
+        fireType = (TextView) findViewById(R.id.fireTypeTxtView);
         installType = (TextView) findViewById(R.id.installTypeTxtBx);
+        noteToInstaller = (TextView) findViewById(R.id.noteToInstallerTxtView);
         completed = (CheckBox) findViewById(R.id.completeCheckBx);
         uncomplete = (CheckBox) findViewById(R.id.unCompleteChkBx);
 
         homePhone = (ImageView) findViewById(R.id.homePhoneImgVw);
         mobilePhone = (ImageView) findViewById(R.id.mobilePhoneImgVw);
+
+        installerNote = (EditText) findViewById(R.id.notesEditTxt);
+        submit = (Button) findViewById(R.id.SubmitBtn);
+
+        submit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+
+                note = String.valueOf(installerNote.getText());
+
+                if(note.isEmpty()){
+                    Context context = getApplicationContext();
+                    CharSequence text = "Please enter a note";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+                else{
+
+                    new PostInstallerNote().execute();
+                }
+            }
+        });
 
         getInstalls();
 
@@ -118,6 +156,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
     private void getInstalls() {
 
+        load();
+
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
@@ -128,7 +168,18 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                         Install install = new Install();
                         saleID = install.findSaleID(response, installIDInt);
+                        fireID = install.findFireID(response, installIDInt);
                         installComplete = install.findInstallCompletion(response, installIDInt);
+
+                        String installerNote = install.findNoteToInstaller(response, installIDInt);
+
+                        if(installerNote.equals(null)){
+                            noteToInstaller.setText("No notes");
+                        }
+                        else {
+                            noteToInstaller.setText(installerNote);
+                        }
+
                         completed.setChecked(installComplete);
 
                         if(installComplete){
@@ -185,6 +236,11 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         //Log.i("customerID", String.valueOf(customerID));
                         installTypeID = sale.findInstallTypeID(response, saleID);
                         getCustomers();
+
+                        saleSiteAddress = sale.findSiteAddress(response, saleID);
+                        for (Sale thisSale : saleSiteAddress) {
+                            address.setText(thisSale.getSiteAddress() + ", " + thisSale.getSiteSuburb());
+                        }
                     }
                 });
     }
@@ -206,7 +262,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                             customerFirstLastName.setText(thisCustomer.getFirstName() + " " + thisCustomer.getLastName());
                             //Log.i("address", thisCustomer.getPostalAddress());
-                            address.setText(thisCustomer.getPostalAddress() + ", " + thisCustomer.getPostalSuburb() + ", " + thisCustomer.getPostalCode());
                             if(!thisCustomer.getPhone().equals("NULL")){
                                 homePhoneNumber.setText(thisCustomer.getPhone());
                             }
@@ -265,8 +320,29 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             }
                         });
 
-                        getInstallTypes();
 
+                        getFires();
+
+                    }
+                });
+    }
+
+    private void getFires() {
+
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Accept", "application/json"));
+
+        WCHRestClient.get(BookingDetailsActivity.this, "/getfires", headers.toArray(new Header[headers.size()]),
+                null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                        Fire fire = new Fire();
+                        //fire.getFires(response);
+                        String thisFireType = fire.findFire(response, fireID);
+                        fireType.setText(thisFireType);
+
+                        getInstallTypes();
                     }
                 });
     }
@@ -287,6 +363,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         installType.setText(installDescription);
                     }
                 });
+
+        bv.setBoo(true);
     }
 
     private class PostInstallComplete extends AsyncTask<Void, Void, String>  {
@@ -295,6 +373,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
 
             String url = "http://10.0.2.2:1997/addInstallComplete";
+            //uncomment the next line to add install complete from cloud web service
+            //String url = "http://52.65.97.218:1997/addInstallComplete";
             JSONObject jsonBody;
             String requestBody;
             HttpURLConnection urlConnection = null;
@@ -352,5 +432,167 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     .show();
         }
     }
+
+    private class PostInstallerNote extends AsyncTask<Void, Void, String>  {
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            String url = "http://10.0.2.2:1997/addinstallernote";
+            //uncomment the next line to add install complete from cloud web service
+            //String url = "http://52.65.97.218:1997/addinstallernote";
+            JSONObject jsonBody;
+            String requestBody;
+            HttpURLConnection urlConnection = null;
+            try {
+                jsonBody = new JSONObject();
+                jsonBody.put("InstallerNote", note);
+                jsonBody.put("InstallID", installIDInt);
+                //jsonBody.put("ReesCode", "null");
+                requestBody = Utils.buildPostParameters(jsonBody);
+                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
+                InputStream inputStream;
+                // get stream
+                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
+                    inputStream = urlConnection.getInputStream();
+                } else {
+                    inputStream = urlConnection.getErrorStream();
+                }
+                // parse stream
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String temp, response = "";
+                while ((temp = bufferedReader.readLine()) != null) {
+                    response += temp;
+                }
+                return response;
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            Log.i("Success","Installer Note Added");
+
+            Context context = getApplicationContext();
+
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(BookingDetailsActivity.this, R.style.myDialog);
+            } else {
+                builder = new AlertDialog.Builder(context);
+            }
+            builder.setTitle("Installer Note Added")
+                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    //.setIcon(android.R.drawable.d)
+                    .show();
+        }
+    }
+
+    private void load(){
+
+        //create progress wheel
+        final ProgressDialog dialog = new ProgressDialog(BookingDetailsActivity.this); // this = YourActivity
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("Loading. Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.show();
+
+        bv = new BooVariable(); //instantiate boolean variable
+        //set listener for variable changes
+        bv.setListener(new BooVariable.ChangeListener() {
+            @Override
+            //stop thread when variable changes
+            public void onChange() {
+                Log.i("tag", "thread done");
+                dialog.cancel(); //stop progress wheel
+            }
+        });
+    }
+
+    /*class PrimeThread extends Thread {
+
+        public void run() {
+
+            new PostInstallID().execute();
+
+        }
+    }
+
+    private class PostInstallID extends AsyncTask<Void, Void, String> {
+
+        @Override
+        protected String doInBackground(Void... params) {
+
+            // Of course, you should comment the other CASES when testing one CASE
+            // CASE 2: For JSONObject parameter
+            String url = "http://10.0.2.2:1997/postInstallID";
+            JSONObject jsonBody;
+            String requestBody;
+            HttpURLConnection urlConnection = null;
+            try {
+                jsonBody = new JSONObject();
+                jsonBody.put("InstallID", installIDInt);
+                requestBody = Utils.buildPostParameters(jsonBody);
+                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
+                InputStream inputStream;
+                // get stream
+                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
+                    inputStream = urlConnection.getInputStream();
+                } else {
+                    inputStream = urlConnection.getErrorStream();
+                }
+                // parse stream
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+                String temp, response = "";
+                while ((temp = bufferedReader.readLine()) != null) {
+                    response += temp;
+                }
+                return response;
+            } catch (JSONException | IOException e) {
+                e.printStackTrace();
+                return e.toString();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+            }
+
+        }
+
+        @Override
+        protected void onPostExecute(String response) {
+            super.onPostExecute(response);
+            Log.i("Success","ID sent");
+            getBooking();
+        }
+    }
+
+    private void getBooking() {
+
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Accept", "application/json"));
+
+        WCHRestClient.get(BookingDetailsActivity.this, "/getbookingdetails", headers.toArray(new Header[headers.size()]),
+                null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                        Customer customer = new Customer();
+                        customer.getSomeCustomers(response);
+                    }
+                });
+    }*/
 
 }

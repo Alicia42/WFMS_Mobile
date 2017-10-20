@@ -18,7 +18,7 @@
             android:id="@+id/ToolListTxtBx"
             android:layout_width="313dp"
             android:layout_height="22dp"
-            android:layout_marginTop="351dp"
+            android:layout_marginTop="395dp"
             android:layout_weight="0.5"
             android:text="Tool List"
             android:textAppearance="@android:style/TextAppearance.Material.Widget.Button.Borderless.Colored"
@@ -28,12 +28,12 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/installTypeTxtBx"
+            android:id="@+id/noteToInstallerTxtView"
             android:layout_width="313dp"
             android:layout_height="22dp"
-            android:layout_marginTop="315dp"
+            android:layout_marginTop="354dp"
             android:layout_weight="0.5"
-            android:text="Install Type"
+            android:text="Note to Installer"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -41,7 +41,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textView6"
+            android:id="@+id/fireTypeTxtView"
             android:layout_width="313dp"
             android:layout_height="22dp"
             android:layout_marginTop="278dp"
@@ -128,7 +128,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="541dp"
+            android:layout_marginTop="589dp"
             app:layout_constraintHorizontal_bias="0.779" />
 
         <CheckBox
@@ -139,16 +139,16 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="419dp"
-            app:layout_constraintHorizontal_bias="0.336" />
+            android:layout_marginTop="467dp"
+            app:layout_constraintHorizontal_bias="0.366" />
 
         <CheckBox
             android:id="@+id/completeCheckBx"
             android:layout_width="152dp"
             android:layout_height="31dp"
-            android:layout_marginTop="384dp"
+            android:layout_marginTop="432dp"
             android:text="Complete"
-            app:layout_constraintHorizontal_bias="0.336"
+            app:layout_constraintHorizontal_bias="0.366"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -164,7 +164,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="449dp"
+            android:layout_marginTop="500dp"
             app:layout_constraintHorizontal_bias="0.833" />
 
         <ImageView
@@ -243,8 +243,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="228dp"
-            app:layout_constraintHorizontal_bias="0.098" />
+            android:layout_marginTop="229dp"
+            app:layout_constraintHorizontal_bias="0.078" />
 
         <ImageView
             android:id="@+id/imageView6"
@@ -254,19 +254,43 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="265dp"
-            app:layout_constraintHorizontal_bias="0.098" />
+            android:layout_marginTop="271dp"
+            app:layout_constraintHorizontal_bias="0.078" />
 
         <ImageView
             android:id="@+id/imageView7"
             android:layout_width="29dp"
             android:layout_height="29dp"
-            app:srcCompat="@drawable/type"
+            android:layout_marginTop="347dp"
+            app:layout_constraintHorizontal_bias="0.078"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/notetoinstaller" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
             android:layout_marginTop="308dp"
-            app:layout_constraintHorizontal_bias="0.098" />
+            app:layout_constraintHorizontal_bias="0.078"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/type" />
+
+        <TextView
+            android:id="@+id/installTypeTxtBx"
+            android:layout_width="313dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="315dp"
+            android:layout_weight="0.5"
+            android:text="Install Type"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/imageView9"
@@ -276,8 +300,8 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="345dp"
-            app:layout_constraintHorizontal_bias="0.098" />
+            android:layout_marginTop="388dp"
+            app:layout_constraintHorizontal_bias="0.078" />
 
     </android.support.constraint.ConstraintLayout>
 </ScrollView>
