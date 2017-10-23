@@ -176,4 +176,38 @@ public class User_Account {
 
         return RoleType;
     }
+
+    public int getUserID(JSONArray response, String hash, String username){
+
+        ArrayList<User_Account> user_accountArrayList = new ArrayList<User_Account>();
+        int userID = 0;
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                user_accountArrayList.add(new User_Account(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (User_Account user_account : user_accountArrayList) {
+
+            try {
+
+                if(user_account.getPasswordHash().equals(hash) && user_account.getUserName().equals(username) && user_account.isAccountActive()) {
+                    Log.i("User ID", String.valueOf(user_account.getUserID()));
+                    userID = user_account.getUserID();
+                }
+                else{
+                    Log.i("Error", "Didn't match");
+                }
+            }
+            catch (Exception e){
+
+                Log.i("Error","Field is null");
+            }
+        }
+
+        return userID;
+    }
 }

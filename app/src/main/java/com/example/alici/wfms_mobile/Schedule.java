@@ -107,25 +107,29 @@ public class Schedule {
             }
         }
 
+        MainActivity.User user = new MainActivity.User();
+
         for (Schedule schedule : scheduleArrayList) {
 
             try {
-                Log.i("Install Date", String.valueOf(schedule.getInstallDate()));
-                /*Log.i("Install Time", schedule.getInstallTime());
-                String toStringUser = String.valueOf(schedule.getUserID());
-                Log.i("User ID", toStringUser);
-                String toStringInstall = String.valueOf(schedule.getInstallID());
-                Log.i("Install ID", toStringInstall);*/
-                java.sql.Date dat = schedule.getInstallDate();
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(dat);
-                int month = cal.get(Calendar.MONTH);
-                int day = cal.get(Calendar.DAY_OF_MONTH);
-                int year = cal.get(Calendar.YEAR);
 
-                Log.i("Day", String.valueOf(day));
-                Log.i("Month", String.valueOf(month));
-                Log.i("Year", String.valueOf(year));
+                if(schedule.getUserID() == user.userID) {
+                    Log.i("UserID", String.valueOf(schedule.getUserID()));
+                    Log.i("Install Date", String.valueOf(schedule.getInstallDate()));
+                    java.sql.Date dat = schedule.getInstallDate();
+                    Calendar cal = Calendar.getInstance();
+                    cal.setTime(dat);
+                    int month = cal.get(Calendar.MONTH);
+                    int day = cal.get(Calendar.DAY_OF_MONTH);
+                    int year = cal.get(Calendar.YEAR);
+
+                    Log.i("Day", String.valueOf(day));
+                    Log.i("Month", String.valueOf(month));
+                    Log.i("Year", String.valueOf(year));
+                }
+                else{
+                    Log.i("Error", "Didn't match");
+                }
             } catch (Exception e) {
 
                 Log.i("Error", "Field is null");

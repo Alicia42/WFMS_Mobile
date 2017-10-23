@@ -209,9 +209,13 @@ public class GetCalendarItems extends Calendar_Base_Activity {
 
             try {
 
-                getInstalls(installIDArray);
+                MainActivity.User user = new MainActivity.User();
 
-                concat = customerNameArray.get(count) + "'s House";
+                if(schedule.getUserID() == MainActivity.User.userID) {
+
+                    getInstalls(installIDArray);
+
+                    concat = customerNameArray.get(count) + "'s House";
                     java.sql.Date dat = schedule.getInstallDate();
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(dat);
@@ -243,8 +247,12 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         event2.setColor(getResources().getColor(R.color.event_color_02));
                         event2.setId(installIDArray.get(count));
                         thisSchedulesList.add(event2);
+                    }
+                    count++;
                 }
-                count++;
+                else{
+                    Log.i("Error", String.valueOf(user.userID));
+                }
 
             } catch (Exception e) {
 

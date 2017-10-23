@@ -35,6 +35,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public String md5Hash;
     public String usernameString;
 
+    public static class User{
+
+        public static int userID;
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,7 +157,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
+                        User user = new User();
                         User_Account user_account = new User_Account();
+
+                        User.userID = user_account.getUserID(response, md5Hash, usernameString);
                         if(user_account.checkLoginDetails(response, md5Hash, usernameString)){
 
                             String roleType = user_account.getRoleType(response, md5Hash, usernameString);
