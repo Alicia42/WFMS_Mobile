@@ -190,7 +190,7 @@
             app:srcCompat="@drawable/person" />
 
         <ImageView
-            android:id="@+id/imageView3"
+            android:id="@+id/addressImgVw"
             android:layout_width="29dp"
             android:layout_height="29dp"
             android:layout_marginTop="110dp"

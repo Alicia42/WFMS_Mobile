@@ -63,6 +63,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     public TextView toolList;
     public CheckBox completed;
     public CheckBox uncomplete;
+    public ImageView addressButton;
     public ImageView homePhone;
     public ImageView mobilePhone;
     public EditText installerNote;
@@ -111,6 +112,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         completed = (CheckBox) findViewById(R.id.completeCheckBx);
         uncomplete = (CheckBox) findViewById(R.id.unCompleteChkBx);
 
+        addressButton = (ImageView) findViewById(R.id.addressImgVw);
         homePhone = (ImageView) findViewById(R.id.homePhoneImgVw);
         mobilePhone = (ImageView) findViewById(R.id.mobilePhoneImgVw);
 
@@ -323,9 +325,22 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         getCustomers();
 
                         saleSiteAddress = sale.findSiteAddress(response, saleID);
+                        String siteAddress = "";
                         for (Sale thisSale : saleSiteAddress) {
                             address.setText(thisSale.getSiteAddress() + ", " + thisSale.getSiteSuburb());
+                            siteAddress = "google.navigation:q=" + thisSale.getSiteAddress() + "+ Auckland";
                         }
+
+                        final String finalSiteAddress = siteAddress;
+                        addressButton.setOnClickListener(new View.OnClickListener() {
+                            //@Override
+                            public void onClick(View v) {
+                                Uri gmmIntentUri = Uri.parse(finalSiteAddress);
+                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                mapIntent.setPackage("com.google.android.apps.maps");
+                                startActivity(mapIntent);
+                            }
+                        });
                     }
                 });
     }
