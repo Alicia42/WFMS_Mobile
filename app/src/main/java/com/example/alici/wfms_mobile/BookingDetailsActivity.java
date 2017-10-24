@@ -134,6 +134,12 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 else{
 
                     new PostInstallerNote().execute();
+                    new PostInstallComplete().execute();
+
+                    if(!installComplete) {
+                        completed.setEnabled(true);
+                        completed.setChecked(false);
+                    }
                 }
             }
         });
@@ -198,6 +204,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                         if(!prevInstallerNote.isEmpty() && !prevInstallerNote.equals("NULL")){
                             installerNote.setText(prevInstallerNote);
+
+                            if(!installComplete) {
+                                uncomplete.setChecked(true);
+                            }
                         }
 
                         completed.setChecked(installComplete);
@@ -228,10 +238,12 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                                                                       if(isChecked){
                                                                           installComplete = false;
-                                                                          new PostInstallComplete().execute();
-                                                                          completed.setEnabled(true);
-                                                                          completed.setChecked(false);
-                                                                          Log.i("submit", "please write note");
+                                                                          Context context = getApplicationContext();
+                                                                          CharSequence text = "Please add note to update completion status";
+                                                                          int duration = Toast.LENGTH_LONG;
+
+                                                                          Toast toast = Toast.makeText(context, text, duration);
+                                                                          toast.show();
                                                                       }
                                                                   }
                                                               }
@@ -490,7 +502,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
             Context context = getApplicationContext();
 
-            AlertDialog.Builder builder;
+            /*AlertDialog.Builder builder;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 builder = new AlertDialog.Builder(BookingDetailsActivity.this, R.style.myDialog);
             } else {
@@ -502,7 +514,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         }
                     })
                     //.setIcon(android.R.drawable.d)
-                    .show();
+                    .show();*/
+
+            CharSequence text = "Installation Status Updated";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
         }
     }
 
