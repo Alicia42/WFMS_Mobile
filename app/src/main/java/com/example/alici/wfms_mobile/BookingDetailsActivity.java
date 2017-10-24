@@ -146,7 +146,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
             }
         });
 
-        getInstalls();
+        //getInstalls();
+        getBookings();
 
     }
 
@@ -168,91 +169,184 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void getInstalls() {
+    private void getBookings() {
 
         load();
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
-        WCHRestClient.get(BookingDetailsActivity.this, "/getinstalls", headers.toArray(new Header[headers.size()]),
+        WCHRestClient.get(BookingDetailsActivity.this, "/getbookingdetails", headers.toArray(new Header[headers.size()]),
                 null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
-                        Install install = new Install();
-                        saleID = install.findSaleID(response, installIDInt);
-                        fireID = install.findFireID(response, installIDInt);
-                        installComplete = install.findInstallCompletion(response, installIDInt);
-                        prevInstallerNote = install.findInstallerNote(response, installIDInt);
+                        Booking booking = new Booking();
+                        ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
+                        bookingArrayList = booking.findBookingObj(response, installIDInt);
 
-                        toolList.setOnClickListener(new View.OnClickListener() {
-                            public void onClick(View v) {
+                        for (Booking thisBooking : bookingArrayList){
+                            //Log.i("Booking", String.valueOf(thisBooking.getInstallID()));
+                            saleID = thisBooking.getSaleID();
+                            fireID = thisBooking.getFireID();
+                            installComplete = thisBooking.isInstallComplete();
+                            prevInstallerNote = thisBooking.getInstallerNote();
 
-                                stockList(stockList);
+                            toolList.setOnClickListener(new View.OnClickListener() {
+                                public void onClick(View v) {
+
+                                    stockList(stockList);
+                                }
+                            });
+
+                            stockList = thisBooking.getStockList();
+
+                            String installerNoteString = thisBooking.getNoteToInstaller();
+
+                            if(installerNoteString.equals(null)){
+                                noteToInstaller.setText("No notes");
                             }
-                        });
-
-                        stockList = install.findStockList(response, installIDInt);
-
-                        String installerNoteString = install.findNoteToInstaller(response, installIDInt);
-
-                        if(installerNoteString.equals(null)){
-                            noteToInstaller.setText("No notes");
-                        }
-                        else {
-                            noteToInstaller.setText(installerNoteString);
-                        }
-
-                        if(!prevInstallerNote.isEmpty() && !prevInstallerNote.equals("NULL")){
-                            installerNote.setText(prevInstallerNote);
-
-                            if(!installComplete) {
-                                uncomplete.setChecked(true);
+                            else {
+                                noteToInstaller.setText(installerNoteString);
                             }
-                        }
 
-                        completed.setChecked(installComplete);
+                            if(!prevInstallerNote.isEmpty() && !prevInstallerNote.equals("NULL")){
+                                installerNote.setText(prevInstallerNote);
 
-                        if(installComplete){
-                            completed.setEnabled(false);
-                        }
+                                if(!installComplete) {
+                                    uncomplete.setChecked(true);
+                                }
+                            }
 
-                        completed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            completed.setChecked(installComplete);
 
-                                                                 @Override
-                                                                 public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                            if(installComplete){
+                                completed.setEnabled(false);
+                            }
 
-                                                                     if(isChecked){
-                                                                         installComplete = true;
-                                                                         new PostInstallComplete().execute();
-                                                                         completed.setEnabled(false);
-                                                                         uncomplete.setChecked(false);
+                            completed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+                                                                     @Override
+                                                                     public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+
+                                                                         if(isChecked){
+                                                                             installComplete = true;
+                                                                             new PostInstallComplete().execute();
+                                                                             completed.setEnabled(false);
+                                                                             uncomplete.setChecked(false);
+                                                                         }
                                                                      }
                                                                  }
-                                                             }
-                        );
+                            );
 
-                        uncomplete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                            uncomplete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
-                                                                  @Override
-                                                                  public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                                                                      @Override
+                                                                      public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
 
-                                                                      if(isChecked){
-                                                                          installComplete = false;
-                                                                          Context context = getApplicationContext();
-                                                                          CharSequence text = "Please add note to update completion status";
-                                                                          int duration = Toast.LENGTH_LONG;
+                                                                          if(isChecked){
+                                                                              installComplete = false;
+                                                                              Context context = getApplicationContext();
+                                                                              CharSequence text = "Please add note to update completion status";
+                                                                              int duration = Toast.LENGTH_LONG;
 
-                                                                          Toast toast = Toast.makeText(context, text, duration);
-                                                                          toast.show();
+                                                                              Toast toast = Toast.makeText(context, text, duration);
+                                                                              toast.show();
+                                                                          }
                                                                       }
                                                                   }
-                                                              }
-                        );
-                        getSales();
+                            );
+
+                            customerID = thisBooking.getCustomerID();
+                            installTypeID = thisBooking.getInstallTypeID();
+                            //getCustomers();
+
+                            String siteAddress = "";
+                            address.setText(thisBooking.getSiteAddress() + ", " + thisBooking.getSiteSuburb());
+                            siteAddress = "google.navigation:q=" + thisBooking.getSiteAddress() + "+ Auckland";
+
+                            final String finalSiteAddress = siteAddress;
+                            addressButton.setOnClickListener(new View.OnClickListener() {
+                                //@Override
+                                public void onClick(View v) {
+                                    Uri gmmIntentUri = Uri.parse(finalSiteAddress);
+                                    Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                                    mapIntent.setPackage("com.google.android.apps.maps");
+                                    startActivity(mapIntent);
+                                }
+                            });
+
+
+                                customerFirstLastName.setText(thisBooking.getFirstName() + " " + thisBooking.getLastName());
+
+                                if(!thisBooking.getPhone().equals("NULL")){
+                                    homePhoneNumber.setText(thisBooking.getPhone());
+                                }
+                                if (thisBooking.getPhone().equals("NULL")){
+                                    homePhoneNumber.setText("No Home Phone Number");
+                                }
+                                if(!thisBooking.getMobile().equals("NULL")){
+                                    mobilePhoneNumber.setText(thisBooking.getMobile());
+                                }
+                                if (thisBooking.getPhone().equals("NULL")){
+                                    homePhoneNumber.setText("No Mobile Phone Number");
+                                }
+
+                                emailAddress.setText(thisBooking.getEmail());
+
+                            homePhone.setOnClickListener(new View.OnClickListener() {
+                                //@Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
+
+                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                            ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+                                        }
+                                        else
+                                        {
+                                            startActivity(intent);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+
+                            mobilePhone.setOnClickListener(new View.OnClickListener() {
+                                //@Override
+                                public void onClick(View v) {
+                                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
+
+                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                        if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                            ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
+                                        }
+                                        else
+                                        {
+                                            startActivity(intent);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
+
+                            String thisFireType = thisBooking.getFireType();
+                            fireType.setText(thisFireType);
+
+                            String installDescription = "";
+                            installDescription = thisBooking.getInstallDescription();
+                            installType.setText(installDescription);
+                        }
                     }
                 });
+
+        bv.setBoo(true);
     }
 
     private void stockList(String stockList){
@@ -308,165 +402,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private void getSales() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(BookingDetailsActivity.this, "/getsales", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Sale sale = new Sale();
-                        customerID = sale.findCustomerID(response, saleID);
-                        //Log.i("customerID", String.valueOf(customerID));
-                        installTypeID = sale.findInstallTypeID(response, saleID);
-                        getCustomers();
-
-                        saleSiteAddress = sale.findSiteAddress(response, saleID);
-                        String siteAddress = "";
-                        for (Sale thisSale : saleSiteAddress) {
-                            address.setText(thisSale.getSiteAddress() + ", " + thisSale.getSiteSuburb());
-                            siteAddress = "google.navigation:q=" + thisSale.getSiteAddress() + "+ Auckland";
-                        }
-
-                        final String finalSiteAddress = siteAddress;
-                        addressButton.setOnClickListener(new View.OnClickListener() {
-                            //@Override
-                            public void onClick(View v) {
-                                Uri gmmIntentUri = Uri.parse(finalSiteAddress);
-                                Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-                                mapIntent.setPackage("com.google.android.apps.maps");
-                                startActivity(mapIntent);
-                            }
-                        });
-                    }
-                });
-    }
-
-    private void getCustomers() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(BookingDetailsActivity.this, "/getcustomers", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Customer customer = new Customer();
-                        customerDetailsList = customer.findCustomerDetails(response, customerID);
-
-                        for (Customer thisCustomer : customerDetailsList) {
-
-                            customerFirstLastName.setText(thisCustomer.getFirstName() + " " + thisCustomer.getLastName());
-                            //Log.i("address", thisCustomer.getPostalAddress());
-                            if(!thisCustomer.getPhone().equals("NULL")){
-                                homePhoneNumber.setText(thisCustomer.getPhone());
-                            }
-                            if (thisCustomer.getPhone().equals("NULL")){
-                                homePhoneNumber.setText("No Home Phone Number");
-                            }
-                            if(!thisCustomer.getMobile().equals("NULL")){
-                                mobilePhoneNumber.setText(thisCustomer.getMobile());
-                            }
-                            if (thisCustomer.getPhone().equals("NULL")){
-                                homePhoneNumber.setText("No Mobile Phone Number");
-                            }
-
-                            emailAddress.setText(thisCustomer.getEmail());
-                        }
-
-                        homePhone.setOnClickListener(new View.OnClickListener() {
-                            //@Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
-
-                                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                        ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
-                                    }
-                                    else
-                                    {
-                                        startActivity(intent);
-                                    }
-                                }
-                                else
-                                {
-                                    startActivity(intent);
-                                }
-                            }
-                        });
-
-                        mobilePhone.setOnClickListener(new View.OnClickListener() {
-                            //@Override
-                            public void onClick(View v) {
-                                Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
-
-                                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                        ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
-                                    }
-                                    else
-                                    {
-                                        startActivity(intent);
-                                    }
-                                }
-                                else
-                                {
-                                    startActivity(intent);
-                                }
-                            }
-                        });
-
-
-                        getFires();
-
-                    }
-                });
-    }
-
-    private void getFires() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(BookingDetailsActivity.this, "/getfires", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Fire fire = new Fire();
-                        //fire.getFires(response);
-                        String thisFireType = fire.findFire(response, fireID);
-                        fireType.setText(thisFireType);
-
-                        getInstallTypes();
-                    }
-                });
-    }
-
-    private void getInstallTypes() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(BookingDetailsActivity.this, "/getinstalltypes", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        String installDescription = "";
-                        Install_Type install_type = new Install_Type();
-                        installDescription = install_type.findInstallType(response, installTypeID);
-                        installType.setText(installDescription);
-                    }
-                });
-
-        bv.setBoo(true);
-    }
-
     private class PostInstallComplete extends AsyncTask<Void, Void, String>  {
 
         @Override
@@ -516,20 +451,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
             Log.i("Success","Install Complete");
 
             Context context = getApplicationContext();
-
-            /*AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(BookingDetailsActivity.this, R.style.myDialog);
-            } else {
-                builder = new AlertDialog.Builder(context);
-            }
-            builder.setTitle("Installation Status Updated")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    //.setIcon(android.R.drawable.d)
-                    .show();*/
 
             CharSequence text = "Installation Status Updated";
             int duration = Toast.LENGTH_SHORT;

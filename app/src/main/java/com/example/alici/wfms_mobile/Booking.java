@@ -1,9 +1,11 @@
 package com.example.alici.wfms_mobile;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 /**
  * Created by libbyjennings on 25/10/17.
@@ -235,6 +237,8 @@ public class Booking {
         InstallDescription = installDescription;
     }
 
+    public Booking(){}
+
     public Booking(JSONObject object) {
         try {
 
@@ -264,5 +268,29 @@ public class Booking {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public ArrayList findBookingObj(JSONArray response, int installID){
+
+        ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
+        ArrayList<Booking> foundBookingList = new ArrayList<Booking>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                bookingArrayList.add(new Booking(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Booking booking : bookingArrayList){
+
+            if (booking.getInstallID() == installID){
+
+                foundBookingList.add(booking);
+            }
+        }
+
+        return foundBookingList;
     }
 }
