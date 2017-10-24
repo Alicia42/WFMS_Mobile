@@ -197,9 +197,11 @@ public class GetCalendarItems extends Calendar_Base_Activity {
         }
 
         for (Schedule schedule : scheduleArrayList) {
-            Install install = new Install();
-            install.setInstallID(schedule.getInstallID());
-            installIDArray.add(install.getInstallID());
+            if (schedule.getUserID() == MainActivity.User.userID){
+                Install install = new Install();
+                install.setInstallID(schedule.getInstallID());
+                installIDArray.add(install.getInstallID());
+            }
         }
 
         int count = 0;

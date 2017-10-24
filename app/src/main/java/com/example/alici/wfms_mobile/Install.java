@@ -22,6 +22,7 @@ public class Install {
     private int SaleID;
     private String FireID;
     private String InstallerID;
+    private String StockList;
     private String NoteToInstaller;
     private boolean InstallComplete;
     private String InstallerNote;
@@ -50,6 +51,13 @@ public class Install {
         InstallerID = installerID;
     }
 
+    public String getStockList() {
+        return StockList;
+    }
+
+    public void setStockList(String stockList) {
+        StockList = stockList;
+    }
 
     public String getNoteToInstaller() {
         return NoteToInstaller;
@@ -89,6 +97,7 @@ public class Install {
             this.SaleID = object.getInt("SaleID");
             this.FireID = object.getString("FireID");
             this.InstallerID = object.getString("InstallerID");
+            this.StockList = object.getString("StockList");
             this.NoteToInstaller = object.getString("NoteToInstaller");
             this.InstallComplete = object.getBoolean("InstallComplete");
             this.InstallerNote = object.getString("InstallerNote");
@@ -228,6 +237,52 @@ public class Install {
         }
 
         return installationComplete;
+    }
+
+    public String findStockList(JSONArray response, int installID){
+
+        ArrayList<Install> installArrayList = new ArrayList<Install>();
+        String stockList = "";
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                installArrayList.add(new Install(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install install : installArrayList){
+
+            if (install.getInstallID() == installID){
+                stockList = install.getStockList();
+            }
+        }
+
+        return stockList;
+    }
+
+    public String findInstallerNote(JSONArray response, int installID){
+
+        ArrayList<Install> installArrayList = new ArrayList<Install>();
+        String installerNote = "";
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                installArrayList.add(new Install(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        for (Install install : installArrayList){
+
+            if (install.getInstallID() == installID){
+                installerNote = install.getInstallerNote();
+            }
+        }
+
+        return installerNote;
     }
 
 }

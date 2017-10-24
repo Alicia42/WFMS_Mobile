@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import android.widget.CompoundButton;
 import android.view.View;
 import android.content.Intent;
 import android.widget.Toast;
+import android.widget.ArrayAdapter;
 
 public class BookingDetailsActivity extends AppCompatActivity {
 
@@ -58,6 +60,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
     public TextView fireType;
     public TextView installType;
     public TextView noteToInstaller;
+    public TextView toolList;
     public CheckBox completed;
     public CheckBox uncomplete;
     public ImageView homePhone;
@@ -73,6 +76,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
     public boolean installComplete = false;
     public BooVariable bv;
     public String note = "";
+    public String stockList = "";
+    public String prevInstallerNote = "";
 
     private static final int REQUEST_PHONE_CALL = 1;
 
@@ -102,6 +107,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         fireType = (TextView) findViewById(R.id.fireTypeTxtView);
         installType = (TextView) findViewById(R.id.installTypeTxtBx);
         noteToInstaller = (TextView) findViewById(R.id.noteToInstallerTxtView);
+        toolList = (TextView) findViewById(R.id.ToolListTxtBx);
         completed = (CheckBox) findViewById(R.id.completeCheckBx);
         uncomplete = (CheckBox) findViewById(R.id.unCompleteChkBx);
 
@@ -170,14 +176,28 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         saleID = install.findSaleID(response, installIDInt);
                         fireID = install.findFireID(response, installIDInt);
                         installComplete = install.findInstallCompletion(response, installIDInt);
+                        prevInstallerNote = install.findInstallerNote(response, installIDInt);
 
-                        String installerNote = install.findNoteToInstaller(response, installIDInt);
+                        toolList.setOnClickListener(new View.OnClickListener() {
+                            public void onClick(View v) {
 
-                        if(installerNote.equals(null)){
+                                stockList(stockList);
+                            }
+                        });
+
+                        stockList = install.findStockList(response, installIDInt);
+
+                        String installerNoteString = install.findNoteToInstaller(response, installIDInt);
+
+                        if(installerNoteString.equals(null)){
                             noteToInstaller.setText("No notes");
                         }
                         else {
-                            noteToInstaller.setText(installerNote);
+                            noteToInstaller.setText(installerNoteString);
+                        }
+
+                        if(!prevInstallerNote.isEmpty() && !prevInstallerNote.equals("NULL")){
+                            installerNote.setText(prevInstallerNote);
                         }
 
                         completed.setChecked(installComplete);
@@ -219,6 +239,59 @@ public class BookingDetailsActivity extends AppCompatActivity {
                         getSales();
                     }
                 });
+    }
+
+    private void stockList(String stockList){
+
+        if(!stockList.isEmpty()) {
+
+            List<String> stockListArray = new ArrayList<String>();
+
+            Context context = getApplicationContext();
+
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(BookingDetailsActivity.this);
+            builderSingle.setTitle("Tool List");
+
+            final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(BookingDetailsActivity.this, android.R.layout.select_dialog_singlechoice);
+            String[] items = stockList.split(",");
+            for (String item : items) {
+                arrayAdapter.add(item);
+            }
+
+            builderSingle.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    /*String strName = arrayAdapter.getItem(which);
+                    AlertDialog.Builder builderInner = new AlertDialog.Builder(BookingDetailsActivity.this);
+                    builderInner.setMessage(strName);
+                    builderInner.setTitle("Stocklist");
+                    builderInner.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builderInner.show();*/
+                }
+            });
+            builderSingle.show();
+        }
+        else {
+
+            Context context = getApplicationContext();
+            CharSequence text = "No tool list available";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
     }
 
     private void getSales() {
@@ -520,79 +593,5 @@ public class BookingDetailsActivity extends AppCompatActivity {
             }
         });
     }
-
-    /*class PrimeThread extends Thread {
-
-        public void run() {
-
-            new PostInstallID().execute();
-
-        }
-    }
-
-    private class PostInstallID extends AsyncTask<Void, Void, String> {
-
-        @Override
-        protected String doInBackground(Void... params) {
-
-            // Of course, you should comment the other CASES when testing one CASE
-            // CASE 2: For JSONObject parameter
-            String url = "http://10.0.2.2:1997/postInstallID";
-            JSONObject jsonBody;
-            String requestBody;
-            HttpURLConnection urlConnection = null;
-            try {
-                jsonBody = new JSONObject();
-                jsonBody.put("InstallID", installIDInt);
-                requestBody = Utils.buildPostParameters(jsonBody);
-                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
-                InputStream inputStream;
-                // get stream
-                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
-                    inputStream = urlConnection.getInputStream();
-                } else {
-                    inputStream = urlConnection.getErrorStream();
-                }
-                // parse stream
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp, response = "";
-                while ((temp = bufferedReader.readLine()) != null) {
-                    response += temp;
-                }
-                return response;
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-                return e.toString();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-            Log.i("Success","ID sent");
-            getBooking();
-        }
-    }
-
-    private void getBooking() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(BookingDetailsActivity.this, "/getbookingdetails", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Customer customer = new Customer();
-                        customer.getSomeCustomers(response);
-                    }
-                });
-    }*/
 
 }
