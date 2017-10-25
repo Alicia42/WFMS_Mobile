@@ -1,5 +1,6 @@
 package com.example.alici.wfms_mobile;
 
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -34,11 +35,13 @@ import android.content.Context;
 import android.os.Build;
 import android.content.DialogInterface;
 import android.content.Intent;
-
+import android.app.ActionBar;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import android.graphics.Color;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
+
 
 public class NewCustomerFormActivity extends AppCompatActivity {
 
@@ -65,7 +68,6 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_customer_form);
-
         registerViews();
     }
 
@@ -346,7 +348,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            String url = "http://10.0.2.2:1997/addcustomersale";
+            String url = "http://wchdomain.duckdns.org:1997/addcustomersale";
             //uncomment the next line to add customer from cloud web service
             //String url = "http://52.65.97.218:1997/addcustomersale";
             JSONObject jsonBody;

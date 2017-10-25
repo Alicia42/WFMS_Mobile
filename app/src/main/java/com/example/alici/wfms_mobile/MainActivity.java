@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loginBtn.setOnClickListener(this);
 
 
-        getCustomers();
+        //getCustomers();
         //getDates();
         //getTimes();
         //getAuthentication();

@@ -407,7 +407,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            String url = "http://10.0.2.2:1997/addInstallComplete";
+            String url = "http://wchdomain.duckdns.org:1997/addInstallComplete";
             //uncomment the next line to add install complete from cloud web service
             //String url = "http://52.65.97.218:1997/addInstallComplete";
             JSONObject jsonBody;
@@ -465,7 +465,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            String url = "http://10.0.2.2:1997/addinstallernote";
+            String url = "http://wchdomain.duckdns.org:1997/addinstallernote";
             //uncomment the next line to add install complete from cloud web service
             //String url = "http://52.65.97.218:1997/addinstallernote";
             JSONObject jsonBody;

@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:fillViewport="true"
-    android:scrollbars="vertical">
+    android:scrollbars="vertical"
+    android:background="#ffffff">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
