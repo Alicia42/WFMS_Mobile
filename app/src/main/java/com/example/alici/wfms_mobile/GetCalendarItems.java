@@ -4,8 +4,19 @@ package com.example.alici.wfms_mobile;
  * Created by libbyjennings on 6/10/17.
  */
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.alamkanak.weekview.WeekViewEvent;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -25,7 +36,7 @@ import java.util.TimerTask;
 
 public class GetCalendarItems extends Calendar_Base_Activity {
 
-    public ArrayList<WeekViewEvent> schedulesList = new ArrayList<WeekViewEvent>();
+    public ArrayList<WeekViewEvent> bookingsList = new ArrayList<WeekViewEvent>();
     public ArrayList<Integer> saleIDArray = new ArrayList<Integer>();
     ArrayList<String> customerNameArray = new ArrayList<String>();
     public int customerNameArraySize = 0;
@@ -36,14 +47,14 @@ public class GetCalendarItems extends Calendar_Base_Activity {
 
 
         //stops the application from constantly grabbing data from the database caausing a thread pool exception
-        if (schedulesList.isEmpty() || update) {
-            getSchedules();
+        if (bookingsList.isEmpty() || update) {
+            getBookings();
             refreshHour();
         }
 
         // Return only the events that matches newYear and newMonth.
         List<WeekViewEvent> matchedEvents = new ArrayList<WeekViewEvent>();
-        for (WeekViewEvent event : schedulesList) {
+        for (WeekViewEvent event : bookingsList) {
             if (eventMatches(event, newYear, newMonth)) {
                 matchedEvents.add(event);
             }
@@ -71,154 +82,60 @@ public class GetCalendarItems extends Calendar_Base_Activity {
         }, delay);
     }
 
-    private void getSchedules() {
+    private void getBookings() {
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
-        WCHRestClient.get(GetCalendarItems.this, "/getschedules", headers.toArray(new Header[headers.size()]),
+        WCHRestClient.get(GetCalendarItems.this, "/getbookingdetails", headers.toArray(new Header[headers.size()]),
                 null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
-                        //Schedule schedule = new Schedule();
-                        schedulesList = convertSchedules(response);
-                        Log.i("List Size", String.valueOf(schedulesList.size()));
-                    }
+                        /*Booking booking = new Booking();
+                        ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
+                        bookingArrayList = booking.findBookingObj(response, installIDInt);*/
 
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Log.d("fail", "onFailure : " + statusCode);
+                        bookingsList = convertSchedules(response);
+
                     }
                 });
+
     }
-
-    private void getInstalls(final ArrayList installIDArray) {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(GetCalendarItems.this, "/getinstalls", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        /*Install install = new Install();
-                        saleIDArray = (ArrayList<Integer>) install.findSaleID(response);
-                        //saleIDArray.add(saleID);
-                        getSales(saleIDArray);*/
-
-                        ArrayList<Integer> saleIDArray = new ArrayList<Integer>();
-                        int saleID = 0;
-                        Install install = new Install();
-                        for (Object installID : installIDArray) {
-                            Install newInstall = new Install();
-                            newInstall.setInstallID((Integer) installID);
-                            saleID = install.findSaleID(response, newInstall.getInstallID());
-                            saleIDArray.add(saleID);
-
-                            getSales(saleIDArray);
-                            //Log.i("Customer size", String.valueOf(customerIDArray.size()));
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                        Log.d("fail", "onFailure : " + statusCode);
-                    }
-                });
-    }
-
-    private void getSales(final ArrayList saleIDArray) {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(GetCalendarItems.this, "/getsales", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        ArrayList<Integer> customerIDArray = new ArrayList<Integer>();
-                        int customerID = 0;
-                        Sale sale = new Sale();
-                        for (Object saleID : saleIDArray) {
-                            Sale newSale = new Sale();
-                            newSale.setSaleID((Integer) saleID);
-                            customerID = sale.findCustomerID(response, newSale.getSaleID());
-                            customerIDArray.add(customerID);
-                            //Log.i("Customer size", String.valueOf(customerIDArray.size()));
-                        }
-
-                        getCustomers(customerIDArray);
-                    }
-                });
-    }
-
-    private void getCustomers(final ArrayList customerIDArray) {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(GetCalendarItems.this, "/getcustomers", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        customerNameArray.clear();
-                        Customer customer = new Customer();
-                        String customerName = "";
-                        for (Object customerID : customerIDArray) {
-                            Customer newCustomer = new Customer();
-                            newCustomer.setCustomerID((Integer) customerID);
-                            customerName = customer.findCustomer(response, newCustomer.getCustomerID());
-                            customerNameArray.add(customerName);
-                            customerNameArraySize = customerNameArray.size();
-                            //Log.i("Customer Name size", String.valueOf(customerNameArraySize));
-                        }
-                    }
-                });
-    }
-
 
     public ArrayList<WeekViewEvent> convertSchedules(JSONArray response) {
 
-        ArrayList<Schedule> scheduleArrayList = new ArrayList<Schedule>();
+        ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
         ArrayList<WeekViewEvent> thisSchedulesList = new ArrayList<WeekViewEvent>();
-        ArrayList<Integer> installIDArray = new ArrayList<Integer>();
+        //ArrayList<Integer> installIDArray = new ArrayList<Integer>();
 
         for (int i = 0; i < response.length(); i++) {
             try {
-                scheduleArrayList.add(new Schedule(response.getJSONObject(i)));
+                bookingArrayList.add(new Booking(response.getJSONObject(i)));
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        for (Schedule schedule : scheduleArrayList) {
-            if (schedule.getUserID() == MainActivity.User.userID){
-                Install install = new Install();
-                install.setInstallID(schedule.getInstallID());
-                installIDArray.add(install.getInstallID());
+        /*for (Booking booking : bookingArrayList) {
+            if (booking.getUserID() == MainActivity.User.userID){
+                installIDArray.add(booking.getInstallID());
             }
-        }
+        }*/
 
         int count = 0;
         String concat = "";
 
-        for (Schedule schedule : scheduleArrayList) {
+        for (Booking booking : bookingArrayList) {
 
             try {
 
                 MainActivity.User user = new MainActivity.User();
 
-                if(schedule.getUserID() == MainActivity.User.userID) {
+                if(booking.getUserID() == MainActivity.User.userID) {
 
-                    getInstalls(installIDArray);
-
-                    concat = customerNameArray.get(count) + "'s House";
-                    java.sql.Date dat = schedule.getInstallDate();
+                    concat = booking.getFirstName() + "'s House";
+                    java.sql.Date dat = booking.getInstallDate();
                     Calendar cal = Calendar.getInstance();
                     cal.setTime(dat);
                     int month = cal.get(Calendar.MONTH);
@@ -228,7 +145,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                     Calendar startTime = Calendar.getInstance();
                     Calendar endTime = (Calendar) startTime.clone();
 
-                    if (schedule.getInstallTime().equals("AM")) {
+                    if (booking.getInstallTime().equals("AM")) {
 
                         startTime = Calendar.getInstance();
                         startTime.set(year, month, day, 9, 00);
@@ -236,7 +153,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         endTime.set(year, month, day, 13, 00);
                         WeekViewEvent event2 = new WeekViewEvent(0, concat, startTime, endTime);
                         event2.setColor(getResources().getColor(R.color.event_color_01));
-                        event2.setId(installIDArray.get(count));
+                        event2.setId(booking.getInstallID());
                         thisSchedulesList.add(event2);
 
                     } else {
@@ -247,7 +164,7 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         endTime.set(year, month, day, 18, 00);
                         WeekViewEvent event2 = new WeekViewEvent(0, concat, startTime, endTime);
                         event2.setColor(getResources().getColor(R.color.event_color_02));
-                        event2.setId(installIDArray.get(count));
+                        event2.setId(booking.getInstallID());
                         thisSchedulesList.add(event2);
                     }
                     count++;

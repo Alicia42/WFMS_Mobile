@@ -1,10 +1,13 @@
 package com.example.alici.wfms_mobile;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -13,7 +16,11 @@ import java.util.ArrayList;
 
 public class Booking {
 
+    private java.util.Date DateValueUtil;
     private int InstallID;
+    private java.sql.Date InstallDate;
+    private String InstallTime;
+    private int UserID;
     private int SaleID;
     private String FireID;
     private String InstallerID;
@@ -42,6 +49,30 @@ public class Booking {
 
     public void setInstallID(int installID) {
         InstallID = installID;
+    }
+
+    public Date getInstallDate() {
+        return InstallDate;
+    }
+
+    public void setInstallDate(Date installDate) {
+        InstallDate = installDate;
+    }
+
+    public String getInstallTime() {
+        return InstallTime;
+    }
+
+    public void setInstallTime(String installTime) {
+        InstallTime = installTime;
+    }
+
+    public int getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(int userID) {
+        UserID = userID;
     }
 
     public int getSaleID() {
@@ -243,27 +274,41 @@ public class Booking {
         try {
 
             InstallID = object.getInt("InstallID");
-            SaleID = object.getInt("SaleID");
-            FireID = object.getString("FireID");
-            InstallerID = object.getString("InstallerID");
-            StockList = object.getString("StockList");
-            NoteToInstaller = object.getString("NoteToInstaller");
-            InstallComplete = object.getBoolean("InstallComplete");
-            InstallerNote = object.getString("InstallerNote");
-            CustomerID = object.getInt("InstallID");
-            InstallTypeID = object.getInt("InstallID");
-            SiteAddress = object.getString("SiteAddress");
-            SiteSuburb = object.getString("SiteSuburb");
-            FirstName = object.getString("FirstName");
-            LastName = object.getString("LastName");
-            PostalAddress = object.getString("PostalAddress");
-            PostalSuburb = object.getString("PostalAddress");
-            PostalCode = object.getString("PostalCode");
-            Phone = object.getString("Phone");
-            Mobile = object.getString("Mobile");
-            Email = object.getString("Email");
-            FireType = object.getString("FireType");
-            InstallDescription = object.getString("InstallDescription");
+
+            String InstallDateString = object.getString("InstallDate");
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                DateValueUtil = sdf1.parse(InstallDateString);
+            } catch (java.text.ParseException e) {
+                Log.i("Error", "couldn't parse date");
+                Log.i("Error", e.getMessage());
+            }
+            java.sql.Date DateValueSql = new java.sql.Date(DateValueUtil.getTime());
+
+            this.InstallDate = DateValueSql;
+            this.InstallTime = object.getString("InstallTime");
+            this.UserID = object.getInt("UserID");
+            this.SaleID = object.getInt("SaleID");
+            this.FireID = object.getString("FireID");
+            this.InstallerID = object.getString("InstallerID");
+            this.StockList = object.getString("StockList");
+            this.NoteToInstaller = object.getString("NoteToInstaller");
+            this.InstallComplete = object.getBoolean("InstallComplete");
+            this.InstallerNote = object.getString("InstallerNote");
+            this.CustomerID = object.getInt("InstallID");
+            this.InstallTypeID = object.getInt("InstallID");
+            this.SiteAddress = object.getString("SiteAddress");
+            this.SiteSuburb = object.getString("SiteSuburb");
+            this.FirstName = object.getString("FirstName");
+            this.LastName = object.getString("LastName");
+            this.PostalAddress = object.getString("PostalAddress");
+            this.PostalSuburb = object.getString("PostalAddress");
+            this.PostalCode = object.getString("PostalCode");
+            this.Phone = object.getString("Phone");
+            this.Mobile = object.getString("Mobile");
+            this.Email = object.getString("Email");
+            this.FireType = object.getString("FireType");
+            this.InstallDescription = object.getString("InstallDescription");
 
         } catch (JSONException e) {
             e.printStackTrace();
