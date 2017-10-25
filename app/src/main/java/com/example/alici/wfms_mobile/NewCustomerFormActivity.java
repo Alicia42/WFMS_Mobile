@@ -23,8 +23,6 @@ import java.net.URL;
 
 import android.os.AsyncTask;
 
-import com.loopj.android.http.JsonHttpResponseHandler;
-
 import org.json.JSONException;
 
 import java.io.BufferedReader;
@@ -32,14 +30,15 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.impl.execchain.MainClientExec;
-import cz.msebera.android.httpclient.message.BasicHeader;
-
 import android.content.Context;
 import android.os.Build;
 import android.content.DialogInterface;
 import android.content.Intent;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.message.BasicHeader;
 
 public class NewCustomerFormActivity extends AppCompatActivity {
 
@@ -56,6 +55,8 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     private EditText postalSuburb;
     private EditText postalAreaCode;
     private Button createCustomerBtn;
+    public Boolean customerExists = false;
+    public Boolean customerUpdated = false;
 
     public URL url;
     public int customerID;
@@ -240,12 +241,84 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         return ret;
     }
 
+    private void getCustomers() {
+
+        List<Header> headers = new ArrayList<Header>();
+        headers.add(new BasicHeader("Accept", "application/json"));
+
+        WCHRestClient.get(NewCustomerFormActivity.this, "/getcustomers", headers.toArray(new Header[headers.size()]),
+                null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                        customerExists = findCustomer(response);
+
+                        if(!customerExists) {
+                            Log.i("same", String.valueOf(customerExists));
+                            PrimeThread p = new PrimeThread(); //create thread for database queries
+                            p.start(); //start thread
+                        }
+
+                        else {
+                            Context context = getApplicationContext();
+                            AlertDialog.Builder builder;
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
+                            } else {
+                                builder = new AlertDialog.Builder(context);
+                            }
+                            builder.setTitle("Customer Already Exists")
+                                    .setMessage("This customer already exists, please use the desktop application to update details if necessary")
+                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                        }
+                                    })
+                                    //.setIcon(android.R.drawable.d)
+                                    .show();
+                        }
+                    }
+                });
+    }
+
+    public boolean findCustomer(JSONArray response){
+
+        //customerExists = false;
+
+        ArrayList<Customer> customerArray = new ArrayList<Customer>();
+
+        for (int i = 0; i < response.length(); i++) {
+            try {
+                customerArray.add(new Customer(response.getJSONObject(i)));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String fname = String.valueOf(firstName.getText());
+        String lname = String.valueOf(lastName.getText());
+        String email = String.valueOf(EmailAddress.getText());
+
+        for (Customer customer : customerArray){
+
+            if (customer.getFirstName().equals(fname) && customer.getLastName().equals(lname) && customer.getEmail().equals(email)){
+
+                return true;
+            }
+        }
+
+        return false;
+
+        //Log.i("result", String.valueOf(customerExists));
+    }
+
+
     private void submitForm() {
         // Submit your form here. your form is valid
         Toast.makeText(this, "Submitting form...", Toast.LENGTH_LONG).show();
-        PrimeThread p = new PrimeThread(); //create thread for database queries
-        p.start(); //start thread
+
+        getCustomers();
     }
+
 
     class PrimeThread extends Thread {
 
@@ -255,6 +328,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
 
         }
     }
+
 
     private class PostCustomer extends AsyncTask<Void, Void, String> {
 
@@ -272,8 +346,6 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Void... params) {
 
-            // Of course, you should comment the other CASES when testing one CASE
-            // CASE 2: For JSONObject parameter
             String url = "http://10.0.2.2:1997/addcustomersale";
             //uncomment the next line to add customer from cloud web service
             //String url = "http://52.65.97.218:1997/addcustomersale";

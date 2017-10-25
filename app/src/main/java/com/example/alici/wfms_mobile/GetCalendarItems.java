@@ -37,9 +37,6 @@ import java.util.TimerTask;
 public class GetCalendarItems extends Calendar_Base_Activity {
 
     public ArrayList<WeekViewEvent> bookingsList = new ArrayList<WeekViewEvent>();
-    public ArrayList<Integer> saleIDArray = new ArrayList<Integer>();
-    ArrayList<String> customerNameArray = new ArrayList<String>();
-    public int customerNameArraySize = 0;
     public boolean update = false;
 
     @Override
@@ -92,10 +89,6 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
-                        /*Booking booking = new Booking();
-                        ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
-                        bookingArrayList = booking.findBookingObj(response, installIDInt);*/
-
                         bookingsList = convertSchedules(response);
 
                     }
@@ -107,7 +100,6 @@ public class GetCalendarItems extends Calendar_Base_Activity {
 
         ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
         ArrayList<WeekViewEvent> thisSchedulesList = new ArrayList<WeekViewEvent>();
-        //ArrayList<Integer> installIDArray = new ArrayList<Integer>();
 
         for (int i = 0; i < response.length(); i++) {
             try {
@@ -117,13 +109,6 @@ public class GetCalendarItems extends Calendar_Base_Activity {
             }
         }
 
-        /*for (Booking booking : bookingArrayList) {
-            if (booking.getUserID() == MainActivity.User.userID){
-                installIDArray.add(booking.getInstallID());
-            }
-        }*/
-
-        int count = 0;
         String concat = "";
 
         for (Booking booking : bookingArrayList) {
@@ -167,10 +152,6 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                         event2.setId(booking.getInstallID());
                         thisSchedulesList.add(event2);
                     }
-                    count++;
-                }
-                else{
-                    Log.i("Error", String.valueOf(user.userID));
                 }
 
             } catch (Exception e) {

@@ -160,44 +160,10 @@ public class Customer {
         }
     }
 
-    public int getNewCustomer(JSONArray response, Editable email) {
-
-        int custID = 0;
-        ArrayList<Customer> customerArray = new ArrayList<Customer>();
-
-        for (int i = 0; i < response.length(); i++) {
-            try {
-                customerArray.add(new Customer(response.getJSONObject(i)));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-
-        for (Customer customer : customerArray) {
-
-            try {
-                if(customer.getEmail().equals(email.toString())) {
-                    String toString = String.valueOf(customer.getCustomerID());
-                    Log.i("customerID", toString);
-                    Log.i("email", customer.getEmail());
-                    Log.i("found", "true");
-                    custID = customer.getCustomerID();
-                }
-            } catch (Exception e) {
-
-                Log.i("Error", "Field is null");
-            }
-        }
-
-        return custID;
-    }
-
-    public String findCustomer(JSONArray response, Integer customerID){
+    public Boolean findCustomer(JSONArray response, String firstName, String lastName, String email){
 
         ArrayList<Customer> customerArray = new ArrayList<Customer>();
-        ArrayList<String> customerNameList = new ArrayList<String>();
-        String customerName = "";
+        Boolean customerExists = false;
 
         for (int i = 0; i < response.length(); i++) {
             try {
@@ -209,42 +175,15 @@ public class Customer {
 
         for (Customer customer : customerArray){
 
-            if (customer.getCustomerID() == customerID){
-                //Log.i("found", "found customer");
-                customerName = customer.getFirstName();
-                //Log.i("Customer", customerName);
+            if (customer.getFirstName().equals(firstName) && customer.getLastName().equals(lastName) && customer.getEmail().equals(email)){
+
+                customerExists = true;
             }
         }
 
-        return customerName;
+        Log.i("result", String.valueOf(customerExists));
+        return customerExists;
     }
 
-
-    public ArrayList findCustomerDetails(JSONArray response, Integer customerID){
-
-        ArrayList<Customer> customerArray = new ArrayList<Customer>();
-        ArrayList<Customer> customerDetailsList = new ArrayList<Customer>();
-        String customerName = "";
-
-        for (int i = 0; i < response.length(); i++) {
-            try {
-                customerArray.add(new Customer(response.getJSONObject(i)));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        for (Customer customer : customerArray){
-
-            if (customer.getCustomerID() == customerID){
-                //Log.i("found", "found customer");
-                customerName = customer.getFirstName();
-                //Log.i("Customer", customerName);
-                customerDetailsList.add(customer);
-            }
-        }
-
-        return customerDetailsList;
-    }
 
 }
