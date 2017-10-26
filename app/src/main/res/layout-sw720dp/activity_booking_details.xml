@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:scrollbars="vertical">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="com.example.alici.wfms_mobile.BookingDetailsActivity">
+
+        <TextView
+            android:id="@+id/ToolListTxtBx"
+            android:layout_width="313dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="340dp"
+            android:layout_weight="0.5"
+            android:text="Tool List"
+            android:textAppearance="@android:style/TextAppearance.Material.Widget.Button.Borderless.Colored"
+            app:layout_constraintHorizontal_bias="0.275"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/noteToInstallerTxtView"
+            android:layout_width="313dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="280dp"
+            android:layout_weight="0.5"
+            android:text="Note to Installer"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.275"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/fireTypeTxtView"
+            android:layout_width="166dp"
+            android:layout_height="26dp"
+            android:layout_marginTop="232dp"
+            android:layout_weight="0.5"
+            android:text="Fire Type"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.211"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/emailTxtBx"
+            android:layout_width="186dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="176dp"
+            android:layout_weight="0.5"
+            android:text="Email Address"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.213"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/mobilePhoneNumberTxtBx"
+            android:layout_width="230dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="112dp"
+            android:layout_weight="0.5"
+            android:text="Mobile Phone Number"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.77"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/addressTxtBx"
+            android:layout_width="260dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="76dp"
+            android:layout_weight="0.5"
+            android:text="Address"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.812"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/custNameTxtBx"
+            android:layout_width="132dp"
+            android:layout_height="21dp"
+            android:layout_marginTop="76dp"
+            android:layout_weight="0.5"
+            android:text="Customer Name"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.196"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/invoiceNumTxtBx"
+            android:layout_width="313dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="36dp"
+            android:layout_weight="0.5"
+            android:text="Invoice No."
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.275"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/SubmitBtn"
+            style="@android:style/Widget.Material.Button.Colored"
+            android:layout_width="309dp"
+            android:layout_height="49dp"
+            android:layout_marginRight="61dp"
+            android:layout_marginTop="560dp"
+            android:text="Submit"
+            app:layout_constraintHorizontal_bias="0.572"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/unCompleteChkBx"
+            android:layout_width="152dp"
+            android:layout_height="31dp"
+            android:layout_marginTop="440dp"
+            android:text="Uncomplete"
+            app:layout_constraintHorizontal_bias="0.204"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/completeCheckBx"
+            android:layout_width="152dp"
+            android:layout_height="31dp"
+            android:layout_marginTop="392dp"
+            android:text="Complete"
+            app:layout_constraintHorizontal_bias="0.204"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/notesEditTxt"
+            android:layout_width="505dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="484dp"
+            android:ems="10"
+            android:hint="Notes"
+            android:inputType="textPersonName"
+            android:singleLine="false"
+            app:layout_constraintHorizontal_bias="0.454"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/hashImageView"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="30dp"
+            app:layout_constraintHorizontal_bias="0.078"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/hash" />
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="68dp"
+            app:layout_constraintHorizontal_bias="0.078"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/person" />
+
+        <ImageView
+            android:id="@+id/addressImgVw"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="72dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/house" />
+
+        <ImageView
+            android:id="@+id/mobilePhoneImgVw"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="112dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/phone" />
+
+        <ImageView
+            android:id="@+id/homePhoneImgVw"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="120dp"
+            app:layout_constraintHorizontal_bias="0.076"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/phone" />
+
+        <TextView
+            android:id="@+id/homePhoneNumTxtBx"
+            android:layout_width="163dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="116dp"
+            android:layout_weight="0.5"
+            android:text="Home Phone Number"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.205"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="172dp"
+            app:layout_constraintHorizontal_bias="0.076"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/email" />
+
+        <ImageView
+            android:id="@+id/imageView6"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="232dp"
+            app:layout_constraintHorizontal_bias="0.076"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/fire" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="280dp"
+            app:layout_constraintHorizontal_bias="0.076"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/notetoinstaller" />
+
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="232dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/type" />
+
+        <TextView
+            android:id="@+id/installTypeTxtBx"
+            android:layout_width="241dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="232dp"
+            android:layout_weight="0.5"
+            android:text="Install Type"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+            app:layout_constraintHorizontal_bias="0.785"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/imageView9"
+            android:layout_width="29dp"
+            android:layout_height="29dp"
+            android:layout_marginTop="340dp"
+            app:layout_constraintHorizontal_bias="0.076"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/tool" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

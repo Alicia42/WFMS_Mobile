@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true"
+    android:scrollbars="vertical"
+    android:background="#ffffff">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context="com.example.alici.wfms_mobile.NewCustomerFormActivity">
+
+        <TextView
+            android:id="@+id/ToolListTxtBx"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Contact Information"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintBottom_toTopOf="@+id/fNameTxtBx"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/fNameTxtBx"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="40dp"
+            android:hint="First Name*"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/hNumberTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/lNameTxtBx"
+            app:layout_constraintTop_toBottomOf="@+id/ToolListTxtBx" />
+
+       <EditText
+            android:id="@+id/lNameTxtBx"
+           android:layout_width="0dp"
+           android:layout_weight="0.5"
+            android:layout_height="40dp"
+            android:hint="Last Name*"
+            android:inputType="textPersonName"
+            app:layout_constraintBottom_toTopOf="@+id/hNumberTxtBx"
+            app:layout_constraintLeft_toRightOf="@+id/fNameTxtBx"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ToolListTxtBx" />
+
+        <EditText
+            android:id="@+id/hNumberTxtBx"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:hint="Home Number"
+            android:inputType="phone"
+            app:layout_constraintBottom_toTopOf="@+id/emailTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/mNumberTxtBx"
+            app:layout_constraintTop_toBottomOf="@+id/lNameTxtBx" />
+
+        <EditText
+            android:id="@+id/mNumberTxtBx"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:hint="Mobile Number"
+            android:inputType="phone"
+            app:layout_constraintBottom_toTopOf="@+id/emailTxtBx"
+            app:layout_constraintLeft_toRightOf="@+id/hNumberTxtBx"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lNameTxtBx" />
+
+        <EditText
+            android:id="@+id/emailTxtBx"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="40dp"
+            android:hint="Email*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/siteInfoTxt"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mNumberTxtBx" />
+
+        <TextView
+            android:id="@+id/siteInfoTxt"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:text="Site Information"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintBottom_toTopOf="@+id/addressTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailTxtBx" />
+
+        <EditText
+            android:id="@+id/addressTxtBx"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="40dp"
+            android:hint="Street Address*"
+            android:inputType="textPostalAddress"
+            android:maxLength="30"
+            app:layout_constraintBottom_toTopOf="@+id/suburbTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/siteInfoTxt"
+            app:layout_constraintHorizontal_bias="0.0" />
+
+        <EditText
+            android:id="@+id/suburbTxtBx"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:hint="Suburb*"
+            android:inputType="text"
+            app:layout_constraintBottom_toTopOf="@+id/postInfoTxt"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/areaCodeTxtBx"
+            app:layout_constraintTop_toBottomOf="@+id/addressTxtBx" />
+
+        <EditText
+            android:id="@+id/areaCodeTxtBx"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:hint="Area Code*"
+            android:inputType="number"
+            app:layout_constraintBottom_toTopOf="@+id/postInfoTxt"
+            app:layout_constraintLeft_toRightOf="@+id/suburbTxtBx"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addressTxtBx" />
+
+        <TextView
+            android:id="@+id/postInfoTxt"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content"
+            android:text="Postal Information"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            app:layout_constraintBottom_toTopOf="@+id/sameAddChBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/areaCodeTxtBx" />
+
+        <CheckBox
+            android:id="@+id/sameAddChBx"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="Postal Address is same as Site Address"
+            app:layout_constraintBottom_toTopOf="@+id/pAddressTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/postInfoTxt" />
+
+        <EditText
+            android:id="@+id/pAddressTxtBx"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="40dp"
+            android:hint="Street Address*"
+            android:inputType="textPostalAddress"
+            app:layout_constraintBottom_toTopOf="@+id/pAreaCodeTxtBx"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sameAddChBx" />
+
+        <EditText
+            android:id="@+id/pAreaCodeTxtBx"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:hint="Area Code*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/CancelBtn"
+            app:layout_constraintLeft_toRightOf="@+id/pSuburbTxtBx"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pAddressTxtBx" />
+
+        <EditText
+            android:id="@+id/pSuburbTxtBx"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:hint="Suburb*"
+            android:inputType="textPhonetic"
+            app:layout_constraintBottom_toTopOf="@+id/CancelBtn"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/pAreaCodeTxtBx"
+            app:layout_constraintTop_toBottomOf="@+id/pAddressTxtBx" />
+
+        <Button
+            android:id="@+id/CancelBtn"
+            android:layout_width="250dp"
+            android:layout_height="51dp"
+            android:background="#F03232"
+            android:onClick="cancel"
+            android:text="Cancel"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/registerBtn"
+            app:layout_constraintTop_toBottomOf="@+id/pAddressTxtBx" />
+
+        <Button
+            android:id="@+id/registerBtn"
+            android:layout_width="250dp"
+            android:layout_height="51dp"
+            android:background="#8EA588"
+            android:onClick="CreateCustomer"
+            android:text="Register"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large.Inverse"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/CancelBtn"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/pAddressTxtBx" />
+
+    </android.support.constraint.ConstraintLayout>
+</ScrollView>

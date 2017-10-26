@@ -41,6 +41,8 @@ import android.graphics.Color;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import android.app.Activity;
+import android.widget.Toolbar;
 
 
 public class NewCustomerFormActivity extends AppCompatActivity {
@@ -60,6 +62,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     private Button createCustomerBtn;
     public Boolean customerExists = false;
     public Boolean customerUpdated = false;
+    private Button cancelBtn;
 
     public URL url;
     public int customerID;
@@ -68,6 +71,8 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_customer_form);
+        Activity activity = NewCustomerFormActivity.this;
+        activity.setTitle("Register New Customer");
         registerViews();
     }
 
@@ -219,6 +224,17 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                     submitForm();
                 else
                     Toast.makeText(NewCustomerFormActivity.this, "Form contains error", Toast.LENGTH_LONG).show();
+            }
+        });
+
+        cancelBtn = (Button) findViewById(R.id.CancelBtn);
+        cancelBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }

@@ -1,6 +1,7 @@
 package com.example.alici.wfms_mobile;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -86,6 +87,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_details);
+
+        Activity activity = BookingDetailsActivity.this;
+        activity.setTitle("Selected Booking Details");
 
         Bundle bundle = getIntent().getExtras();
         installID = bundle.getString("installID");
