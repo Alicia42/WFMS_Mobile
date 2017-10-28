@@ -76,7 +76,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordTxtBx" />
 
-<!--There is something wrong with the linking of the password box to the login button.-->
+    <!--There is something wrong with the linking of the password box to the login button.-->
 
 
 </android.support.constraint.ConstraintLayout>

@@ -6,6 +6,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -129,31 +131,33 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                 note = String.valueOf(installerNote.getText());
 
-                if(note.isEmpty()){
+                if (note.isEmpty()) {
                     Context context = getApplicationContext();
                     CharSequence text = "Please enter a note";
                     int duration = Toast.LENGTH_SHORT;
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
-                }
-                else{
+                } else {
 
-                    new PostInstallerNote().execute();
-                    new PostInstallComplete().execute();
+                    if(isInternetConnected()) {
 
-                    if(!installComplete) {
-                        completed.setEnabled(true);
-                        completed.setChecked(false);
+                        new PostInstallerNote().execute();
+                        new PostInstallComplete().execute();
+
+                        if (!installComplete) {
+                            completed.setEnabled(true);
+                            completed.setChecked(false);
+                        }
                     }
                 }
             }
         });
 
-        //getInstalls();
         getBookings();
 
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
@@ -170,6 +174,28 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     }
                 }
             }
+        }
+    }
+
+    public boolean isInternetConnected(){
+
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (!mWifi.isConnected()) {
+
+            Context context = getApplicationContext();
+            CharSequence text = "No Internet Connection - Please connect to submit update";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+
+            return false;
+        }
+        else {
+
+            return true;
         }
     }
 
@@ -233,11 +259,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                      @Override
                                                                      public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
 
-                                                                         if(isChecked){
+                                                                         if(isChecked && isInternetConnected()){
                                                                              installComplete = true;
                                                                              new PostInstallComplete().execute();
                                                                              completed.setEnabled(false);
                                                                              uncomplete.setChecked(false);
+                                                                         }
+                                                                         else {
+                                                                             completed.setChecked(false);
                                                                          }
                                                                      }
                                                                  }
@@ -248,7 +277,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                       @Override
                                                                       public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
 
-                                                                          if(isChecked){
+                                                                          if(isChecked && isInternetConnected()){
                                                                               installComplete = false;
                                                                               Context context = getApplicationContext();
                                                                               CharSequence text = "Please add note to update completion status";
@@ -256,6 +285,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                                                                               Toast toast = Toast.makeText(context, text, duration);
                                                                               toast.show();
+                                                                          }
+                                                                          else {
+                                                                              uncomplete.setChecked(false);
                                                                           }
                                                                       }
                                                                   }
@@ -452,6 +484,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
+            uncomplete.setChecked(true);
             Log.i("Success","Install Complete");
 
             Context context = getApplicationContext();

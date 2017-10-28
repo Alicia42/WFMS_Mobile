@@ -22,6 +22,8 @@ import java.io.IOException;
 import android.util.Base64;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import java.io.UnsupportedEncodingException;
 
@@ -48,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         username = (EditText) findViewById(R.id.usernameTxtBx);
         passwordTxtBx = (EditText) findViewById(R.id.passwordTxtBx);
+
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
         Button loginBtn = (Button) findViewById(R.id.loginBtn);
         loginBtn.setOnClickListener(this);
@@ -100,25 +105,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     public void onClick(View v) {
 
-        usernameString = String.valueOf(username.getText());
-        computeMD5Hash(passwordTxtBx.getText().toString() + usernameString);
-        getUserAccounts();
-        /*Intent intent = new Intent(this, NewCustomerFormActivity.class);
-        startActivity(intent);*/
-        /*Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
-        startActivity(intent);*/
-        /*Intent intent = new Intent(MainActivity.this, BookingDetailsActivity.class);
-        startActivity(intent);*/
-    }
 
-    /*class PrimeThread extends Thread {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        public void run() {
+        if (!mWifi.isConnected()) {
+            Context context = getApplicationContext();
+            CharSequence text = "No Internet Connection - Please connect to login";
+            int duration = Toast.LENGTH_LONG;
 
-            bv.setBoo(true);
-
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
         }
-    }*/
+        else {
+            usernameString = String.valueOf(username.getText());
+            computeMD5Hash(passwordTxtBx.getText().toString() + usernameString);
+            getUserAccounts();
+        }
+    }
 
     private void load(){
 

@@ -7,12 +7,16 @@ package com.example.alici.wfms_mobile;
 import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -81,18 +85,47 @@ public class GetCalendarItems extends Calendar_Base_Activity {
 
     private void getBookings() {
 
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
-        WCHRestClient.get(GetCalendarItems.this, "/getbookingdetails", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+        if (!mWifi.isConnected()) {
 
-                        bookingsList = convertSchedules(response);
+            Context context = getApplicationContext();
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(GetCalendarItems.this, R.style.myDialog);
+            } else {
+                builder = new AlertDialog.Builder(context);
+            }
+            builder.setTitle("No Internet Connection")
+                    .setMessage("Please connect and click refresh to try again")
+                    .setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            getBookings();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    })
+                    //.setIcon(android.R.drawable.d)
+                    .show();
+        }
+        else {
 
-                    }
-                });
+            List<Header> headers = new ArrayList<Header>();
+            headers.add(new BasicHeader("Accept", "application/json"));
+
+            WCHRestClient.get(GetCalendarItems.this, "/getbookingdetails", headers.toArray(new Header[headers.size()]),
+                    null, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+
+                            bookingsList = convertSchedules(response);
+
+                        }
+                    });
+        }
 
     }
 

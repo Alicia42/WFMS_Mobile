@@ -1,6 +1,8 @@
 package com.example.alici.wfms_mobile;
 
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -220,8 +222,23 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                 Validation class will check the error and display the error on respective fields
                 but it won't resist the form submission, so we need to check again before submit
                  */
-                if ( checkValidation () )
-                    submitForm();
+                if ( checkValidation () ) {
+
+                    ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+                    if (!mWifi.isConnected()) {
+                        Context context = getApplicationContext();
+                        CharSequence text = "No Internet Connection - Please connect and try again";
+                        int duration = Toast.LENGTH_LONG;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }
+                    else {
+                        submitForm();
+                    }
+                }
                 else
                     Toast.makeText(NewCustomerFormActivity.this, "Form contains error", Toast.LENGTH_LONG).show();
             }

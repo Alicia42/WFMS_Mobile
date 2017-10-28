@@ -1,5 +1,11 @@
 package com.example.alici.wfms_mobile;
 
+import android.content.Context;
+import android.content.DialogInterface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.graphics.RectF;
@@ -142,15 +148,40 @@ public abstract class Calendar_Base_Activity extends AppCompatActivity implement
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
     }
 
+    public boolean isInternetConnected(){
+
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+
+        if (!mWifi.isConnected()) {
+
+            Context context = getApplicationContext();
+            CharSequence text = "No Internet Connection - Please connect to view booking";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+
+            return false;
+        }
+        else {
+
+            return true;
+        }
+    }
+
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
-        Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(Calendar_Base_Activity.this, BookingDetailsActivity.class);
-        Bundle extras = new Bundle();
-        extras.putString("customerName", event.getName());
-        extras.putString("installID", String.valueOf(event.getId()));
-        intent.putExtras(extras);
-        startActivity(intent);
+
+        if(isInternetConnected()) {
+            Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(Calendar_Base_Activity.this, BookingDetailsActivity.class);
+            Bundle extras = new Bundle();
+            extras.putString("customerName", event.getName());
+            extras.putString("installID", String.valueOf(event.getId()));
+            intent.putExtras(extras);
+            startActivity(intent);
+        }
     }
 
     @Override
