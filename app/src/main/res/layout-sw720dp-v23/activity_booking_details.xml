@@ -21,22 +21,21 @@
             android:layout_marginTop="340dp"
             android:layout_weight="0.5"
             android:text="Tool List"
-            android:textAppearance="@android:style/TextAppearance.Material.Widget.Button.Borderless.Colored"
-            app:layout_constraintHorizontal_bias="0.319"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+            app:layout_constraintHorizontal_bias="0.275"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:targetApi="n" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/noteToInstallerTxtView"
             android:layout_width="313dp"
             android:layout_height="22dp"
-            android:layout_marginTop="284dp"
+            android:layout_marginTop="280dp"
             android:layout_weight="0.5"
             android:text="Note to Installer"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            app:layout_constraintHorizontal_bias="0.319"
+            app:layout_constraintHorizontal_bias="0.275"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -58,11 +57,11 @@
             android:id="@+id/emailTxtBx"
             android:layout_width="186dp"
             android:layout_height="25dp"
-            android:layout_marginTop="172dp"
+            android:layout_marginTop="176dp"
             android:layout_weight="0.5"
             android:text="Email Address"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            app:layout_constraintHorizontal_bias="0.221"
+            app:layout_constraintHorizontal_bias="0.213"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -71,11 +70,11 @@
             android:id="@+id/mobilePhoneNumberTxtBx"
             android:layout_width="230dp"
             android:layout_height="25dp"
-            android:layout_marginTop="116dp"
+            android:layout_marginTop="112dp"
             android:layout_weight="0.5"
             android:text="Mobile Phone Number"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            app:layout_constraintHorizontal_bias="0.919"
+            app:layout_constraintHorizontal_bias="0.77"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -88,7 +87,7 @@
             android:layout_weight="0.5"
             android:text="Address"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.812"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -114,7 +113,7 @@
             android:layout_weight="0.5"
             android:text="Invoice No."
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            app:layout_constraintHorizontal_bias="0.319"
+            app:layout_constraintHorizontal_bias="0.275"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -127,11 +126,10 @@
             android:layout_marginRight="61dp"
             android:layout_marginTop="560dp"
             android:text="Submit"
-            app:layout_constraintHorizontal_bias="0.592"
+            app:layout_constraintHorizontal_bias="0.572"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:targetApi="m" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <CheckBox
             android:id="@+id/unCompleteChkBx"
@@ -163,9 +161,10 @@
             android:ems="10"
             android:maxLength="255"
             android:hint="Notes"
-            android:inputType="textPersonName"
+            android:inputType="textLongMessage"
+            android:selectAllOnFocus="false"
             android:singleLine="false"
-            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintHorizontal_bias="0.454"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -227,11 +226,11 @@
             android:id="@+id/homePhoneNumTxtBx"
             android:layout_width="163dp"
             android:layout_height="24dp"
-            android:layout_marginTop="120dp"
+            android:layout_marginTop="116dp"
             android:layout_weight="0.5"
             android:text="Home Phone Number"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            app:layout_constraintHorizontal_bias="0.21"
+            app:layout_constraintHorizontal_bias="0.205"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -283,11 +282,11 @@
             android:id="@+id/installTypeTxtBx"
             android:layout_width="241dp"
             android:layout_height="22dp"
-            android:layout_marginTop="236dp"
+            android:layout_marginTop="232dp"
             android:layout_weight="0.5"
             android:text="Install Type"
             android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-            app:layout_constraintHorizontal_bias="0.955"
+            app:layout_constraintHorizontal_bias="0.785"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

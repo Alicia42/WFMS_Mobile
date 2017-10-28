@@ -83,12 +83,26 @@ public class GetCalendarItems extends Calendar_Base_Activity {
         }, delay);
     }
 
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
+    }
+
     private void getBookings() {
 
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        if (!mWifi.isConnected()) {
+        if (!haveNetworkConnection()) {
 
             Context context = getApplicationContext();
             AlertDialog.Builder builder;
@@ -102,10 +116,6 @@ public class GetCalendarItems extends Calendar_Base_Activity {
                     .setPositiveButton("Refresh", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             getBookings();
-                        }
-                    })
-                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
                         }
                     })
                     //.setIcon(android.R.drawable.d)

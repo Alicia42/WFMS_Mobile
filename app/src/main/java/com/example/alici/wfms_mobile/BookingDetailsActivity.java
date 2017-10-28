@@ -138,9 +138,20 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
-                } else {
+                }
+                if(note.length() > 255){
+                    Context context = getApplicationContext();
+                    CharSequence text = "Note is too big, maximum is 255 characters";
+                    int duration = Toast.LENGTH_SHORT;
 
-                    if(isInternetConnected()) {
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+                else {
+
+                    Log.i("length:" , String.valueOf(note.length()));
+
+                    if(haveNetworkConnection()) {
 
                         new PostInstallerNote().execute();
                         new PostInstallComplete().execute();
@@ -177,26 +188,21 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public boolean isInternetConnected(){
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
 
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        if (!mWifi.isConnected()) {
-
-            Context context = getApplicationContext();
-            CharSequence text = "No Internet Connection - Please connect to submit update";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
-            return false;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
-        else {
-
-            return true;
-        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     private void getBookings() {
@@ -259,7 +265,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                      @Override
                                                                      public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
 
-                                                                         if(isChecked && isInternetConnected()){
+                                                                         if(isChecked && haveNetworkConnection()){
                                                                              installComplete = true;
                                                                              new PostInstallComplete().execute();
                                                                              completed.setEnabled(false);
@@ -277,7 +283,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                       @Override
                                                                       public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
 
-                                                                          if(isChecked && isInternetConnected()){
+                                                                          if(isChecked && haveNetworkConnection()){
                                                                               installComplete = false;
                                                                               Context context = getApplicationContext();
                                                                               CharSequence text = "Please add note to update completion status";
@@ -484,7 +490,6 @@ public class BookingDetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String response) {
             super.onPostExecute(response);
-            uncomplete.setChecked(true);
             Log.i("Success","Install Complete");
 
             Context context = getApplicationContext();

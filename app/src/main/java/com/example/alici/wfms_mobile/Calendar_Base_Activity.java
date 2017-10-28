@@ -148,32 +148,27 @@ public abstract class Calendar_Base_Activity extends AppCompatActivity implement
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
     }
 
-    public boolean isInternetConnected(){
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
 
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-        if (!mWifi.isConnected()) {
-
-            Context context = getApplicationContext();
-            CharSequence text = "No Internet Connection - Please connect to view booking";
-            int duration = Toast.LENGTH_LONG;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-
-            return false;
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
         }
-        else {
-
-            return true;
-        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
 
-        if(isInternetConnected()) {
+        if(haveNetworkConnection()) {
             Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(Calendar_Base_Activity.this, BookingDetailsActivity.class);
             Bundle extras = new Bundle();
