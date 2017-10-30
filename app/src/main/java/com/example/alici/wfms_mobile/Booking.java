@@ -317,6 +317,8 @@ public class Booking {
 
     public ArrayList findBookingObj(JSONArray response, int installID){
 
+        Log.i("made it", "worked");
+
         ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
         ArrayList<Booking> foundBookingList = new ArrayList<Booking>();
 

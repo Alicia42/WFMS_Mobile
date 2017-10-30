@@ -25,7 +25,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -153,8 +155,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                     if(haveNetworkConnection()) {
 
-                        new PostInstallerNote().execute();
-                        new PostInstallComplete().execute();
+                        //new PostInstallerNote().execute();
+                        PostInstallerNote();
+                        //new PostInstallComplete().execute();
+                        PostInstallComplete();
 
                         if (!installComplete) {
                             completed.setEnabled(true);
@@ -239,7 +243,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                             String installerNoteString = thisBooking.getNoteToInstaller();
 
-                            if(installerNoteString.equals(null)){
+                            if(installerNoteString.isEmpty()){
                                 noteToInstaller.setText("No notes");
                             }
                             else {
@@ -267,7 +271,8 @@ public class BookingDetailsActivity extends AppCompatActivity {
 
                                                                          if(isChecked && haveNetworkConnection()){
                                                                              installComplete = true;
-                                                                             new PostInstallComplete().execute();
+                                                                             //new PostInstallComplete().execute();
+                                                                             PostInstallComplete();
                                                                              completed.setEnabled(false);
                                                                              uncomplete.setChecked(false);
                                                                          }
@@ -444,128 +449,61 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
     }
 
-    private class PostInstallComplete extends AsyncTask<Void, Void, String>  {
+    public void PostInstallComplete(){
 
-        @Override
-        protected String doInBackground(Void... params) {
+        RequestParams params = new RequestParams();
+        params.put("InstallComplete", installComplete);
+        params.put("InstallID", installIDInt);
+        params.setUseJsonStreamer(true);
 
-            String url = "http://wchdomain.duckdns.org:1997/addInstallComplete";
-            //uncomment the next line to add install complete from cloud web service
-            //String url = "http://52.65.97.218:1997/addInstallComplete";
-            JSONObject jsonBody;
-            String requestBody;
-            HttpURLConnection urlConnection = null;
-            try {
-                jsonBody = new JSONObject();
-                jsonBody.put("InstallComplete", installComplete);
-                jsonBody.put("InstallID", installIDInt);
-                //jsonBody.put("ReesCode", "null");
-                requestBody = Utils.buildPostParameters(jsonBody);
-                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
-                InputStream inputStream;
-                // get stream
-                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
-                    inputStream = urlConnection.getInputStream();
-                } else {
-                    inputStream = urlConnection.getErrorStream();
-                }
-                // parse stream
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp, response = "";
-                while ((temp = bufferedReader.readLine()) != null) {
-                    response += temp;
-                }
-                return response;
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-                return e.toString();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
+        WCHRestClient.post("/addInstallComplete", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                Context context = getApplicationContext();
+
+                CharSequence text = "Installation Status Updated";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
             }
 
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-            Log.i("Success","Install Complete");
-
-            Context context = getApplicationContext();
-
-            CharSequence text = "Installation Status Updated";
-            int duration = Toast.LENGTH_SHORT;
-
-            Toast toast = Toast.makeText(context, text, duration);
-            toast.show();
-        }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            }
+        });
     }
 
-    private class PostInstallerNote extends AsyncTask<Void, Void, String>  {
+    public void PostInstallerNote(){
 
-        @Override
-        protected String doInBackground(Void... params) {
+        RequestParams params = new RequestParams();
+        params.put("InstallerNote", note);
+        params.put("InstallID", installIDInt);
+        params.setUseJsonStreamer(true);
 
-            String url = "http://wchdomain.duckdns.org:1997/addinstallernote";
-            //uncomment the next line to add install complete from cloud web service
-            //String url = "http://52.65.97.218:1997/addinstallernote";
-            JSONObject jsonBody;
-            String requestBody;
-            HttpURLConnection urlConnection = null;
-            try {
-                jsonBody = new JSONObject();
-                jsonBody.put("InstallerNote", note);
-                jsonBody.put("InstallID", installIDInt);
-                //jsonBody.put("ReesCode", "null");
-                requestBody = Utils.buildPostParameters(jsonBody);
-                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
-                InputStream inputStream;
-                // get stream
-                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
-                    inputStream = urlConnection.getInputStream();
+        WCHRestClient.post("/addinstallernote", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                Context context = getApplicationContext();
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(BookingDetailsActivity.this, R.style.myDialog);
                 } else {
-                    inputStream = urlConnection.getErrorStream();
+                    builder = new AlertDialog.Builder(context);
                 }
-                // parse stream
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp, response = "";
-                while ((temp = bufferedReader.readLine()) != null) {
-                    response += temp;
-                }
-                return response;
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-                return e.toString();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
+                builder.setTitle("Installer Note Added")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        //.setIcon(android.R.drawable.d)
+                        .show();
             }
 
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-            Log.i("Success","Installer Note Added");
-
-            Context context = getApplicationContext();
-
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(BookingDetailsActivity.this, R.style.myDialog);
-            } else {
-                builder = new AlertDialog.Builder(context);
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             }
-            builder.setTitle("Installer Note Added")
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                        }
-                    })
-                    //.setIcon(android.R.drawable.d)
-                    .show();
-        }
+        });
     }
 
     private void load(){

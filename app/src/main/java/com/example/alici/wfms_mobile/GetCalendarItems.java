@@ -162,6 +162,9 @@ public class GetCalendarItems extends Calendar_Base_Activity {
 
                 if(booking.getUserID() == MainActivity.User.userID) {
 
+                    Log.i("length", String.valueOf(bookingArrayList.size()));
+
+                    Log.i("customer last", booking.getLastName());
                     concat = booking.getFirstName() + "'s House";
                     java.sql.Date dat = booking.getInstallDate();
                     Calendar cal = Calendar.getInstance();

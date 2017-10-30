@@ -5,39 +5,34 @@ package com.example.alici.wfms_mobile;
  */
 
 import android.content.Context;
-import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.MySSLSocketFactory;
 import com.loopj.android.http.RequestParams;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.conn.ssl.SSLSocketFactory;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import java.io.FileInputStream;
+
 import java.io.InputStream;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.ByteArrayInputStream;
-import android.util.Base64;
 import java.security.cert.CertificateFactory;
-import javax.net.ssl.KeyManagerFactory;
+import java.io.BufferedInputStream;
+import java.security.cert.Certificate;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.HttpsURLConnection;
+import java.net.URL;
+import java.io.FileInputStream;
+import java.security.cert.X509Certificate;
 
 public class WCHRestClient {
 
@@ -50,13 +45,86 @@ public class WCHRestClient {
 
 
     static {
+        // Load CAs from an InputStream
+        // (could be from a resource or ByteArrayInputStream or ...)
+        /*CertificateFactory cf = null;
+        try {
+            cf = CertificateFactory.getInstance("X.509");
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        }
+
+        Context context = null;
+        context.getApplicationContext();
+        // From https://www.washington.edu/itconnect/security/ca/load-der.crt
+        InputStream is = null;
+        try {
+            is = context.getResources().getAssets().open("/Users/libbyjennings/Desktop/your-cert.crt");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        InputStream caInput = new BufferedInputStream(is);
+        Certificate ca;
+        try {
+            ca = cf.generateCertificate(caInput);
+            // Create a KeyStore containing our trusted CAs
+            String keyStoreType = KeyStore.getDefaultType();
+            KeyStore keyStore = null;
+            try {
+                keyStore = KeyStore.getInstance(keyStoreType);
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            }
+            try {
+                keyStore.load(null, null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (CertificateException e) {
+                e.printStackTrace();
+            }
+            keyStore.setCertificateEntry("ca", ca);
+            try {
+                MyCustomSSLFactory socketFactory = new MyCustomSSLFactory(keyStore);
+                client.setSSLSocketFactory(socketFactory);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            } catch (KeyManagementException e) {
+                e.printStackTrace();
+            } catch (KeyStoreException e) {
+                e.printStackTrace();
+            } catch (UnrecoverableKeyException e) {
+                e.printStackTrace();
+            }
+            // System.out.println("ca=" + ((X509Certificate) ca).getSubjectDN());
+        } catch (CertificateException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                caInput.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }*/
+
+        //AsyncHttpClient asycnHttpClient = new AsyncHttpClient(true, 80, 443);
         client.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory());
+    }
+
+    public WCHRestClient() throws UnrecoverableKeyException, NoSuchAlgorithmException, KeyStoreException, KeyManagementException {
     }
 
 
     public static void get(Context context, String url, Header[] headers, RequestParams params,
                            AsyncHttpResponseHandler responseHandler) {
         client.get(context, getAbsoluteUrl(url), headers, params, responseHandler);
+    }
+
+    public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
+        client.post(getAbsoluteUrl(url), params, responseHandler);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {

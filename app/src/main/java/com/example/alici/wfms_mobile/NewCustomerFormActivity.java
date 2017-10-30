@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 
 import org.json.JSONArray;
@@ -38,13 +39,23 @@ import android.os.Build;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.app.ActionBar;
+
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
 import android.graphics.Color;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
+import cz.msebera.android.httpclient.protocol.HTTP;
+
 import android.app.Activity;
 import android.widget.Toolbar;
+
+import javax.net.ssl.HttpsURLConnection;
 
 
 public class NewCustomerFormActivity extends AppCompatActivity {
@@ -305,8 +316,9 @@ public class NewCustomerFormActivity extends AppCompatActivity {
 
                         if(!customerExists) {
                             Log.i("same", String.valueOf(customerExists));
-                            PrimeThread p = new PrimeThread(); //create thread for database queries
-                            p.start(); //start thread
+                            //PrimeThread p = new PrimeThread(); //create thread for database queries
+                            //p.start(); //start thread
+                            PostCustomer();
                         }
 
                         else {
@@ -369,18 +381,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         getCustomers();
     }
 
-
-    class PrimeThread extends Thread {
-
-        public void run() {
-
-            new PostCustomer().execute();
-
-        }
-    }
-
-
-    private class PostCustomer extends AsyncTask<Void, Void, String> {
+    public void PostCustomer(){
 
         Editable fName = firstName.getText();
         Editable lName = lastName.getText();
@@ -393,78 +394,48 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         Editable sAddress = address.getText();
         Editable sSuburb = suburb.getText();
 
-        @Override
-        protected String doInBackground(Void... params) {
+        RequestParams params = new RequestParams();
+        params.put("FirstName", fName);
+        params.put("LastName", lName);
+        params.put("PostalAddress", pAddress);
+        params.put("PostalSuburb", pSuburb);
+        params.put("PostalCode", pCode);
+        params.put("Phone", hNumber);
+        params.put("Mobile", mNumber);
+        params.put("Email", email);
+        params.put("SiteAddress", sAddress);
+        params.put("SiteSuburb", sSuburb);
+        params.setUseJsonStreamer(true);
 
-            String url = "http://wchdomain.duckdns.org:1997/addcustomersale";
-            //uncomment the next line to add customer from cloud web service
-            //String url = "http://52.65.97.218:1997/addcustomersale";
-            JSONObject jsonBody;
-            String requestBody;
-            HttpURLConnection urlConnection = null;
-            try {
-                jsonBody = new JSONObject();
-                jsonBody.put("FirstName", fName);
-                jsonBody.put("LastName", lName);
-                jsonBody.put("PostalAddress", pAddress);
-                jsonBody.put("PostalSuburb", pSuburb);
-                jsonBody.put("PostalCode", pCode);
-                jsonBody.put("Phone", hNumber);
-                jsonBody.put("Mobile", mNumber);
-                jsonBody.put("Email", email);
-                jsonBody.put("SiteAddress", sAddress);
-                jsonBody.put("SiteSuburb", sSuburb);
-                //jsonBody.put("ReesCode", "null");
-                requestBody = Utils.buildPostParameters(jsonBody);
-                urlConnection = (HttpURLConnection) Utils.makeRequest("POST", url, null, "application/json", requestBody);
-                InputStream inputStream;
-                // get stream
-                if (urlConnection.getResponseCode() < HttpURLConnection.HTTP_BAD_REQUEST) {
-                    inputStream = urlConnection.getInputStream();
-                } else {
-                    inputStream = urlConnection.getErrorStream();
+        WCHRestClient.post("/addcustomersale", params, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Log.i("Success","Form Submitted");
+                    Context context = getApplicationContext();
+                    AlertDialog.Builder builder;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
+                    } else {
+                        builder = new AlertDialog.Builder(context);
+                    }
+                    builder.setTitle("Registration Complete!")
+                            .setMessage("Thank you for registering")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                }
+                            })
+                            //.setIcon(android.R.drawable.d)
+                            .show();
                 }
-                // parse stream
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp, response = "";
-                while ((temp = bufferedReader.readLine()) != null) {
-                    response += temp;
-                }
-                return response;
-            } catch (JSONException | IOException e) {
-                e.printStackTrace();
-                return e.toString();
-            } finally {
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             }
+        });
 
-        }
-
-        @Override
-        protected void onPostExecute(String response) {
-            super.onPostExecute(response);
-            Log.i("Success","Form Submitted");
-            Context context = getApplicationContext();
-            AlertDialog.Builder builder;
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
-            } else {
-                builder = new AlertDialog.Builder(context);
-            }
-            builder.setTitle("Registration Complete!")
-                    .setMessage("Thank you for registering, " + fName)
-                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
-                            startActivity(intent);
-                            finish();
-                        }
-                    })
-                    //.setIcon(android.R.drawable.d)
-                    .show();
-        }
     }
 
 }
