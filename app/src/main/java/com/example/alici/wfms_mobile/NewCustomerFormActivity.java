@@ -258,9 +258,28 @@ public class NewCustomerFormActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
+                Context context = getApplicationContext();
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
+                } else {
+                    builder = new AlertDialog.Builder(context);
+                }
+                builder.setTitle("Warning")
+                        .setMessage("Are you sure you want to cancel?")
+                        .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
+                                startActivity(intent);
+                                finish();
+                            }
+                        })
+                        .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                            }
+                        })
+                        //.setIcon(android.R.drawable.d)
+                        .show();
             }
         });
     }
@@ -422,7 +441,8 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                             .setMessage("Thank you for registering")
                             .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
+
+                                    Intent intent = new Intent(NewCustomerFormActivity.this, NewCustomerFormActivity.class);
                                     startActivity(intent);
                                     finish();
                                 }

@@ -177,6 +177,14 @@ public abstract class Calendar_Base_Activity extends AppCompatActivity implement
             intent.putExtras(extras);
             startActivity(intent);
         }
+        else{
+            Context context = getApplicationContext();
+            CharSequence text = "No Internet Connection - Please connect and try again";
+            int duration = Toast.LENGTH_LONG;
+
+            Toast toast = Toast.makeText(context, text, duration);
+            toast.show();
+        }
     }
 
     @Override

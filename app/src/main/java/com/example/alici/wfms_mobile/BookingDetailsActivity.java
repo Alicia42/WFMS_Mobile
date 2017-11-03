@@ -17,6 +17,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.util.Log;
 import android.widget.Button;
@@ -84,6 +85,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
     public String note = "";
     public String stockList = "";
     public String prevInstallerNote = "";
+    public boolean isHomePhone = false;
+    public boolean isMobilePhone = false;
+    public boolean isCallable = false;
 
     private static final int REQUEST_PHONE_CALL = 1;
 
@@ -149,7 +153,7 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
-                else {
+                if(!note.isEmpty() && note.length() < 255) {
 
                     Log.i("length:" , String.valueOf(note.length()));
 
@@ -164,6 +168,14 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             completed.setEnabled(true);
                             completed.setChecked(false);
                         }
+                    }
+                    else {
+                        Context context = getApplicationContext();
+                        CharSequence text = "No Internet Connection - Please connect and try again";
+                        int duration = Toast.LENGTH_LONG;
+
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
                     }
                 }
             }
@@ -269,15 +281,31 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                      @Override
                                                                      public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
 
-                                                                         if(isChecked && haveNetworkConnection()){
-                                                                             installComplete = true;
-                                                                             //new PostInstallComplete().execute();
-                                                                             PostInstallComplete();
-                                                                             completed.setEnabled(false);
-                                                                             uncomplete.setChecked(false);
+                                                                         if(haveNetworkConnection()) {
+                                                                             if (isChecked) {
+                                                                                 installComplete = true;
+                                                                                 //new PostInstallComplete().execute();
+                                                                                 PostInstallComplete();
+                                                                                 completed.setEnabled(false);
+                                                                                 uncomplete.setChecked(false);
+                                                                             } else {
+                                                                                 completed.setChecked(false);
+                                                                                 Context context = getApplicationContext();
+                                                                                 CharSequence text = "No Internet Connection - Please connect and try again";
+                                                                                 int duration = Toast.LENGTH_LONG;
+
+                                                                                 Toast toast = Toast.makeText(context, text, duration);
+                                                                                 toast.show();
+                                                                             }
                                                                          }
                                                                          else {
                                                                              completed.setChecked(false);
+                                                                             Context context = getApplicationContext();
+                                                                             CharSequence text = "No Internet Connection - Please connect and try again";
+                                                                             int duration = Toast.LENGTH_LONG;
+
+                                                                             Toast toast = Toast.makeText(context, text, duration);
+                                                                             toast.show();
                                                                          }
                                                                      }
                                                                  }
@@ -288,17 +316,28 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                       @Override
                                                                       public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
 
-                                                                          if(isChecked && haveNetworkConnection()){
-                                                                              installComplete = false;
+                                                                          if(haveNetworkConnection()) {
+                                                                              if (isChecked) {
+                                                                                  installComplete = false;
+                                                                                  Context context = getApplicationContext();
+
+                                                                                  CharSequence text = "Please add a note to update completion status";
+                                                                                  int duration = Toast.LENGTH_SHORT;
+
+                                                                                  Toast toast = Toast.makeText(context, text, duration);
+                                                                                  toast.show();
+                                                                              } else {
+                                                                                  uncomplete.setChecked(false);
+                                                                              }
+                                                                          }
+                                                                          else {
+                                                                              uncomplete.setChecked(false);
                                                                               Context context = getApplicationContext();
-                                                                              CharSequence text = "Please add note to update completion status";
+                                                                              CharSequence text = "No Internet Connection - Please connect and try again";
                                                                               int duration = Toast.LENGTH_LONG;
 
                                                                               Toast toast = Toast.makeText(context, text, duration);
                                                                               toast.show();
-                                                                          }
-                                                                          else {
-                                                                              uncomplete.setChecked(false);
                                                                           }
                                                                       }
                                                                   }
@@ -323,20 +362,21 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                 }
                             });
 
-
                                 customerFirstLastName.setText(thisBooking.getFirstName() + " " + thisBooking.getLastName());
 
                                 if(!thisBooking.getPhone().equals("NULL")){
                                     homePhoneNumber.setText(thisBooking.getPhone());
+                                    isHomePhone = true;
                                 }
                                 if (thisBooking.getPhone().equals("NULL")){
-                                    homePhoneNumber.setText("No Home Phone Number");
+                                    isHomePhone = false;
                                 }
                                 if(!thisBooking.getMobile().equals("NULL")){
                                     mobilePhoneNumber.setText(thisBooking.getMobile());
+                                    isMobilePhone = true;
                                 }
                                 if (thisBooking.getPhone().equals("NULL")){
-                                    homePhoneNumber.setText("No Mobile Phone Number");
+                                    isMobilePhone = true;
                                 }
 
                                 emailAddress.setText(thisBooking.getEmail());
@@ -344,20 +384,42 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             homePhone.setOnClickListener(new View.OnClickListener() {
                                 //@Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
 
-                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                            ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
-                                        }
-                                        else
-                                        {
-                                            startActivity(intent);
-                                        }
+                                    TelephonyManager tm= (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+                                    if(tm.getPhoneType()==TelephonyManager.PHONE_TYPE_NONE){
+                                        //No calling functionality
+                                        Context context = getApplicationContext();
+
+                                        CharSequence text = "No calling functionality on this device";
+                                        int duration = Toast.LENGTH_SHORT;
+
+                                        Toast toast = Toast.makeText(context, text, duration);
+                                        toast.show();
+
                                     }
-                                    else
-                                    {
-                                        startActivity(intent);
+                                    else {
+
+                                        if (isHomePhone) {
+                                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
+
+                                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                                    ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                                                } else {
+                                                    startActivity(intent);
+                                                }
+                                            } else {
+                                                startActivity(intent);
+                                            }
+                                        } else {
+                                            Context context = getApplicationContext();
+
+                                            CharSequence text = "No Home Phone Number";
+                                            int duration = Toast.LENGTH_SHORT;
+
+                                            Toast toast = Toast.makeText(context, text, duration);
+                                            toast.show();
+                                        }
                                     }
                                 }
                             });
@@ -365,20 +427,27 @@ public class BookingDetailsActivity extends AppCompatActivity {
                             mobilePhone.setOnClickListener(new View.OnClickListener() {
                                 //@Override
                                 public void onClick(View v) {
-                                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
+                                    if(isMobilePhone) {
+                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
 
-                                    if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                        if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                            ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE},REQUEST_PHONE_CALL);
-                                        }
-                                        else
-                                        {
+                                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                            if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                                ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                                            } else {
+                                                startActivity(intent);
+                                            }
+                                        } else {
                                             startActivity(intent);
                                         }
                                     }
-                                    else
-                                    {
-                                        startActivity(intent);
+                                    else {
+                                        Context context = getApplicationContext();
+
+                                        CharSequence text = "No Mobile Phone Number";
+                                        int duration = Toast.LENGTH_SHORT;
+
+                                        Toast toast = Toast.makeText(context, text, duration);
+                                        toast.show();
                                     }
                                 }
                             });
