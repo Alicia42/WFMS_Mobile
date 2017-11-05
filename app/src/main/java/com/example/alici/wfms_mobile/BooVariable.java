@@ -1,7 +1,8 @@
 package com.example.alici.wfms_mobile;
 
 /**
- * Created by libbyjennings on 20/09/17.
+ * Created by Libby Jennings on 20/09/17.
+ * Description: Class for listening for changes in boolean variable. Used for stopping loading progress wheel
  */
 
 public class BooVariable {
@@ -12,8 +13,8 @@ public class BooVariable {
         return boo;
     }
 
-    public void setBoo(boolean boo) {
-        this.boo = boo;
+    void setBoo() {
+        this.boo = true;
         if (listener != null) listener.onChange();
     }
 
@@ -21,7 +22,7 @@ public class BooVariable {
         return listener;
     }
 
-    public void setListener(ChangeListener listener) {
+    void setListener(ChangeListener listener) {
         this.listener = listener;
     }
 

@@ -137,7 +137,7 @@
             android:layout_width="152dp"
             android:layout_height="31dp"
             android:layout_marginTop="440dp"
-            android:text="Uncomplete"
+            android:text="Incomplete"
             app:layout_constraintHorizontal_bias="0.204"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

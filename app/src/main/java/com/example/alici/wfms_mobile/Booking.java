@@ -1,5 +1,6 @@
 package com.example.alici.wfms_mobile;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -11,7 +12,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
- * Created by libbyjennings on 25/10/17.
+ * Created by Libby Jennings on 16/10/17.
+ * Description: class for getting and setting booking details
  */
 
 public class Booking {
@@ -23,7 +25,6 @@ public class Booking {
     private int UserID;
     private int SaleID;
     private String FireID;
-    private String InstallerID;
     private String StockList;
     private String NoteToInstaller;
     private boolean InstallComplete;
@@ -34,173 +35,59 @@ public class Booking {
     private String SiteSuburb;
     private String FirstName;
     private String LastName;
-    private String PostalAddress;
-    private String PostalSuburb;
-    private String PostalCode;
     private String Phone;
     private String Mobile;
     private String Email;
     private String FireType;
     private String InstallDescription;
 
-    public int getInstallID() {
+    //Getter and setter methods
+    int getInstallID() {
         return InstallID;
     }
 
-    public void setInstallID(int installID) {
-        InstallID = installID;
-    }
-
-    public Date getInstallDate() {
+    Date getInstallDate() {
         return InstallDate;
     }
 
-    public void setInstallDate(Date installDate) {
-        InstallDate = installDate;
-    }
-
-    public String getInstallTime() {
+    String getInstallTime() {
         return InstallTime;
     }
 
-    public void setInstallTime(String installTime) {
-        InstallTime = installTime;
-    }
-
-    public int getUserID() {
+    int getUserID() {
         return UserID;
     }
 
-    public void setUserID(int userID) {
-        UserID = userID;
-    }
-
-    public int getSaleID() {
-        return SaleID;
-    }
-
-    public void setSaleID(int saleID) {
-        SaleID = saleID;
-    }
-
-    public String getFireID() {
-        return FireID;
-    }
-
-    public void setFireID(String fireID) {
-        FireID = fireID;
-    }
-
-    public String getInstallerID() {
-        return InstallerID;
-    }
-
-    public void setInstallerID(String installerID) {
-        InstallerID = installerID;
-    }
-
-    public String getStockList() {
+    String getStockList() {
         return StockList;
     }
 
-    public void setStockList(String stockList) {
-        StockList = stockList;
-    }
-
-    public String getNoteToInstaller() {
+    String getNoteToInstaller() {
         return NoteToInstaller;
     }
 
-    public void setNoteToInstaller(String noteToInstaller) {
-        NoteToInstaller = noteToInstaller;
-    }
-
-    public boolean isInstallComplete() {
+    boolean isInstallComplete() {
         return InstallComplete;
     }
 
-    public void setInstallComplete(boolean installComplete) {
-        InstallComplete = installComplete;
-    }
-
-    public String getInstallerNote() {
+    String getInstallerNote() {
         return InstallerNote;
     }
 
-    public void setInstallerNote(String installerNote) {
-        InstallerNote = installerNote;
-    }
-
-    public int getCustomerID() {
-        return CustomerID;
-    }
-
-    public void setCustomerID(int customerID) {
-        CustomerID = customerID;
-    }
-
-    public int getInstallTypeID() {
-        return InstallTypeID;
-    }
-
-    public void setInstallTypeID(int installTypeID) {
-        InstallTypeID = installTypeID;
-    }
-
-    public String getSiteAddress() {
+    String getSiteAddress() {
         return SiteAddress;
     }
 
-    public void setSiteAddress(String siteAddress) {
-        SiteAddress = siteAddress;
-    }
-
-    public String getSiteSuburb() {
+    String getSiteSuburb() {
         return SiteSuburb;
     }
 
-    public void setSiteSuburb(String siteSuburb) {
-        SiteSuburb = siteSuburb;
-    }
-
-    public String getFirstName() {
+    String getFirstName() {
         return FirstName;
     }
 
-    public void setFirstName(String firstName) {
-        FirstName = firstName;
-    }
-
-    public String getLastName() {
+    String getLastName() {
         return LastName;
-    }
-
-    public void setLastName(String lastName) {
-        LastName = lastName;
-    }
-
-    public String getPostalAddress() {
-        return PostalAddress;
-    }
-
-    public void setPostalAddress(String postalAddress) {
-        PostalAddress = postalAddress;
-    }
-
-    public String getPostalSuburb() {
-        return PostalSuburb;
-    }
-
-    public void setPostalSuburb(String postalSuburb) {
-        PostalSuburb = postalSuburb;
-    }
-
-    public String getPostalCode() {
-        return PostalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        PostalCode = postalCode;
     }
 
     public String getPhone() {
@@ -227,70 +114,39 @@ public class Booking {
         Email = email;
     }
 
-    public String getFireType() {
+    String getFireType() {
         return FireType;
     }
 
-    public void setFireType(String fireType) {
-        FireType = fireType;
-    }
-
-    public String getInstallDescription() {
+    String getInstallDescription() {
         return InstallDescription;
     }
 
-    public void setInstallDescription(String installDescription) {
-        InstallDescription = installDescription;
-    }
+    Booking(){}
 
-    public Booking(int installID, int saleID, String fireID, String installerID, String stockList, String noteToInstaller, boolean installComplete, String installerNote, int customerID, int installTypeID, String siteAddress, String siteSuburb, String firstName, String lastName, String postalAddress, String postalSuburb, String postalCode, String phone, String mobile, String email, String fireType, String installDescription) {
-        InstallID = installID;
-        SaleID = saleID;
-        FireID = fireID;
-        InstallerID = installerID;
-        StockList = stockList;
-        NoteToInstaller = noteToInstaller;
-        InstallComplete = installComplete;
-        InstallerNote = installerNote;
-        CustomerID = customerID;
-        InstallTypeID = installTypeID;
-        SiteAddress = siteAddress;
-        SiteSuburb = siteSuburb;
-        FirstName = firstName;
-        LastName = lastName;
-        PostalAddress = postalAddress;
-        PostalSuburb = postalSuburb;
-        PostalCode = postalCode;
-        Phone = phone;
-        Mobile = mobile;
-        Email = email;
-        FireType = fireType;
-        InstallDescription = installDescription;
-    }
-
-    public Booking(){}
-
-    public Booking(JSONObject object) {
+    //Constructor for initialising JSON objects from server
+    Booking(JSONObject object) {
         try {
 
+            //parse object as int with name
             InstallID = object.getInt("InstallID");
 
+            //parse object as string with name and convert to date
             String InstallDateString = object.getString("InstallDate");
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
             try {
                 DateValueUtil = sdf1.parse(InstallDateString);
             } catch (java.text.ParseException e) {
                 Log.i("Error", "couldn't parse date");
                 Log.i("Error", e.getMessage());
             }
-            java.sql.Date DateValueSql = new java.sql.Date(DateValueUtil.getTime());
 
-            this.InstallDate = DateValueSql;
+            //get value of converted date object
+            this.InstallDate = new Date(DateValueUtil.getTime());
             this.InstallTime = object.getString("InstallTime");
             this.UserID = object.getInt("UserID");
             this.SaleID = object.getInt("SaleID");
             this.FireID = object.getString("FireID");
-            this.InstallerID = object.getString("InstallerID");
             this.StockList = object.getString("StockList");
             this.NoteToInstaller = object.getString("NoteToInstaller");
             this.InstallComplete = object.getBoolean("InstallComplete");
@@ -301,9 +157,6 @@ public class Booking {
             this.SiteSuburb = object.getString("SiteSuburb");
             this.FirstName = object.getString("FirstName");
             this.LastName = object.getString("LastName");
-            this.PostalAddress = object.getString("PostalAddress");
-            this.PostalSuburb = object.getString("PostalAddress");
-            this.PostalCode = object.getString("PostalCode");
             this.Phone = object.getString("Phone");
             this.Mobile = object.getString("Mobile");
             this.Email = object.getString("Email");
@@ -315,13 +168,13 @@ public class Booking {
         }
     }
 
-    public ArrayList findBookingObj(JSONArray response, int installID){
-
-        Log.i("made it", "worked");
+    //method for returning a selected booking row from the install ID
+    ArrayList<Booking> findBookingObj(JSONArray response, int installID){
 
         ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
         ArrayList<Booking> foundBookingList = new ArrayList<Booking>();
 
+        //get JSON objects and add to array list
         for (int i = 0; i < response.length(); i++) {
             try {
                 bookingArrayList.add(new Booking(response.getJSONObject(i)));
@@ -330,6 +183,7 @@ public class Booking {
             }
         }
 
+        //for each booking in the array that has the selected install ID, add it to another list
         for (Booking booking : bookingArrayList){
 
             if (booking.getInstallID() == installID){

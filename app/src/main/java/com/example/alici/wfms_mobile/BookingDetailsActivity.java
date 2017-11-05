@@ -1,6 +1,7 @@
 package com.example.alici.wfms_mobile;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -9,16 +10,14 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
-import android.text.Editable;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -31,17 +30,9 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.message.BasicHeader;
@@ -52,11 +43,14 @@ import android.content.Intent;
 import android.widget.Toast;
 import android.widget.ArrayAdapter;
 
+/**
+ * Created by Libby Jennings on 14/10/17.
+ * Description: Activity class for displaying a selected bookings details
+ */
+
 public class BookingDetailsActivity extends AppCompatActivity {
 
-    ArrayList<String> customerNameArray = new ArrayList<String>();
-    ArrayList<Customer> customerDetailsList = new ArrayList<Customer>();
-    ArrayList<Sale> saleSiteAddress = new ArrayList<Sale>();
+    //global class variables
     public TextView customerFirstLastName;
     public TextView invoiceNum;
     public TextView address;
@@ -87,31 +81,34 @@ public class BookingDetailsActivity extends AppCompatActivity {
     public String prevInstallerNote = "";
     public boolean isHomePhone = false;
     public boolean isMobilePhone = false;
-    public boolean isCallable = false;
-
     private static final int REQUEST_PHONE_CALL = 1;
+    public String phoneSelected = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking_details);
 
+        //set title bar
         Activity activity = BookingDetailsActivity.this;
         activity.setTitle("Selected Booking Details");
 
+        //get install id from calendar
         Bundle bundle = getIntent().getExtras();
+        assert bundle != null;
         installID = bundle.getString("installID");
 
         invoiceNum = (TextView) findViewById(R.id.invoiceNumTxtBx);
         invoiceNum.setText(installID);
 
+        //convert id to int
         try {
             installIDInt = Integer.parseInt(installID);
         } catch (NumberFormatException nfe) {
             System.out.println("Could not parse " + nfe);
         }
 
-
+        //initialise text views, checkboxes, edit texts and buttons
         customerFirstLastName = (TextView) findViewById(R.id.custNameTxtBx);
         address = (TextView) findViewById(R.id.addressTxtBx);
         homePhoneNumber = (TextView) findViewById(R.id.homePhoneNumTxtBx);
@@ -131,12 +128,18 @@ public class BookingDetailsActivity extends AppCompatActivity {
         installerNote = (EditText) findViewById(R.id.notesEditTxt);
         submit = (Button) findViewById(R.id.SubmitBtn);
 
+        //get booking details
+        getBookings();
+
+        //set on click listener for submit button
         submit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                // Perform action on click
 
+
+                //get text from note field
                 note = String.valueOf(installerNote.getText());
 
+                //check that note field isn't empty
                 if (note.isEmpty()) {
                     Context context = getApplicationContext();
                     CharSequence text = "Please enter a note";
@@ -145,7 +148,9 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
-                if(note.length() > 255){
+                //check that note field isn't over it's maximum capacity for db
+                if (note.length() > 255) {
+                    //display toast message
                     Context context = getApplicationContext();
                     CharSequence text = "Note is too big, maximum is 255 characters";
                     int duration = Toast.LENGTH_SHORT;
@@ -153,22 +158,24 @@ public class BookingDetailsActivity extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
                 }
-                if(!note.isEmpty() && note.length() < 255) {
+                //Add note to database if correct
+                if (!note.isEmpty() && note.length() < 255) {
 
-                    Log.i("length:" , String.valueOf(note.length()));
+                    Log.i("length:", String.valueOf(note.length()));
 
-                    if(haveNetworkConnection()) {
+                    //check for internet connection
+                    if (haveNetworkConnection()) {
 
-                        //new PostInstallerNote().execute();
-                        PostInstallerNote();
-                        //new PostInstallComplete().execute();
-                        PostInstallComplete();
+                        PostInstallerNote(); //post note to server
+                        PostInstallComplete(); //post installation not complete (if nothing checked)
 
+                        //un-check complete checkbox and re-enable it
                         if (!installComplete) {
                             completed.setEnabled(true);
                             completed.setChecked(false);
                         }
                     }
+                    //no internet connection
                     else {
                         Context context = getApplicationContext();
                         CharSequence text = "No Internet Connection - Please connect and try again";
@@ -181,20 +188,25 @@ public class BookingDetailsActivity extends AppCompatActivity {
             }
         });
 
-        getBookings();
-
     }
 
-
+    //Method for requesting permission to call someone from the app
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
-            case REQUEST_PHONE_CALL : {
+            case REQUEST_PHONE_CALL: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
+                    Intent intent = new Intent();
+                    //Check that mobile or home phone button was clicked and parse that number in when allowed calling from user
+                    if (phoneSelected.equals("home")) {
+                        intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
+                    }
+                    if (phoneSelected.equals("mobile")) {
+                        intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
+                    }
 
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) == PackageManager.PERMISSION_GRANTED) {
                         startActivity(intent);
@@ -204,102 +216,120 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
     }
 
+    //Method for checking wifi and mobile network connection
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
+            //check wifi connection
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
                 if (ni.isConnected())
-                    haveConnectedWifi = true;
+                    haveConnectedWifi = true; //wifi connection is there
+            //check mobile network connection
             if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
                 if (ni.isConnected())
-                    haveConnectedMobile = true;
+                    haveConnectedMobile = true; //mobile network connection is there
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
 
+    //Method for getting booking details from server
     private void getBookings() {
 
+        //loading wheel just in case it takes long to grab data (use to be slow)
         load();
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
+        //async request for getting sever data
         WCHRestClient.get(BookingDetailsActivity.this, "/getbookingdetails", headers.toArray(new Header[headers.size()]),
                 null, new JsonHttpResponseHandler() {
+                    @SuppressLint("SetTextI18n")
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
+                        //create new booking object
                         Booking booking = new Booking();
-                        ArrayList<Booking> bookingArrayList = new ArrayList<Booking>();
+                        ArrayList<Booking> bookingArrayList;
+                        //assign to result of method findBookingObj in Booking class
                         bookingArrayList = booking.findBookingObj(response, installIDInt);
 
-                        for (Booking thisBooking : bookingArrayList){
-                            //Log.i("Booking", String.valueOf(thisBooking.getInstallID()));
-                            saleID = thisBooking.getSaleID();
-                            fireID = thisBooking.getFireID();
+                        //loop through the array and assign details to text views
+                        for (Booking thisBooking : bookingArrayList) {
+                            //get installation status (true or false)
                             installComplete = thisBooking.isInstallComplete();
+                            //get installer notes
                             prevInstallerNote = thisBooking.getInstallerNote();
-
+                            //get stock list string
+                            stockList = thisBooking.getStockList();
+                            //set on click listener for tool list button
                             toolList.setOnClickListener(new View.OnClickListener() {
                                 public void onClick(View v) {
 
+                                    //call method to convert stock list string into a list
                                     stockList(stockList);
                                 }
                             });
-
-                            stockList = thisBooking.getStockList();
-
+                            //get note to installer
                             String installerNoteString = thisBooking.getNoteToInstaller();
 
-                            if(installerNoteString.isEmpty()){
+                            //check if there is a note to an installer
+                            if (installerNoteString.isEmpty()) {
+                                //set text view message
                                 noteToInstaller.setText("No notes");
                             }
+                            //set text view to note
                             else {
                                 noteToInstaller.setText(installerNoteString);
                             }
 
-                            if(!prevInstallerNote.isEmpty() && !prevInstallerNote.equals("NULL")){
+                            //Check if there is an installer note
+                            if (!prevInstallerNote.isEmpty() && !prevInstallerNote.equals("NULL")) {
+                                //set textview to installer note
                                 installerNote.setText(prevInstallerNote);
 
-                                if(!installComplete) {
+                                //if there is a note and installation isn't complete, set checkbox to checked (true)
+                                if (!installComplete) {
                                     uncomplete.setChecked(true);
                                 }
                             }
 
+                            //set complete checkbox to result from db (true / false)
                             completed.setChecked(installComplete);
 
-                            if(installComplete){
+                            //disable checkbox if completion status is true
+                            if (installComplete) {
                                 completed.setEnabled(false);
                             }
 
+                            //set complete checkbox on check listener
                             completed.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
                                                                      @Override
-                                                                     public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                                                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                                                                         if(haveNetworkConnection()) {
+                                                                         //check for internet connection
+                                                                         if (haveNetworkConnection()) {
+                                                                             //check if completion is checked already
                                                                              if (isChecked) {
+                                                                                 //update completion status to true
                                                                                  installComplete = true;
-                                                                                 //new PostInstallComplete().execute();
-                                                                                 PostInstallComplete();
-                                                                                 completed.setEnabled(false);
-                                                                                 uncomplete.setChecked(false);
+                                                                                 PostInstallComplete(); //post status
+                                                                                 completed.setEnabled(false); //disable checkbox
+                                                                                 uncomplete.setChecked(false); //uncheck uncomplete checkbox
                                                                              } else {
-                                                                                 completed.setChecked(false);
-                                                                                 Context context = getApplicationContext();
-                                                                                 CharSequence text = "No Internet Connection - Please connect and try again";
-                                                                                 int duration = Toast.LENGTH_LONG;
-
-                                                                                 Toast toast = Toast.makeText(context, text, duration);
-                                                                                 toast.show();
+                                                                                 completed.setChecked(false); //uncheck checkbox
                                                                              }
                                                                          }
+                                                                         //No internet connection
                                                                          else {
-                                                                             completed.setChecked(false);
+                                                                             completed.setChecked(false); //uncheck checkbox if no internet connection
+                                                                             //display message
                                                                              Context context = getApplicationContext();
                                                                              CharSequence text = "No Internet Connection - Please connect and try again";
                                                                              int duration = Toast.LENGTH_LONG;
@@ -310,15 +340,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                      }
                                                                  }
                             );
-
+                            //set incomplete checkbox on check listener
                             uncomplete.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 
                                                                       @Override
-                                                                      public void onCheckedChanged(CompoundButton buttonView,boolean isChecked) {
+                                                                      public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                                                                          if(haveNetworkConnection()) {
+                                                                          //check for internet connection
+                                                                          if (haveNetworkConnection()) {
+                                                                              //check if completion is checked already
                                                                               if (isChecked) {
+                                                                                  //update completion status to true
                                                                                   installComplete = false;
+                                                                                  //display message to add note to update status in db
                                                                                   Context context = getApplicationContext();
 
                                                                                   CharSequence text = "Please add a note to update completion status";
@@ -327,11 +361,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                                   Toast toast = Toast.makeText(context, text, duration);
                                                                                   toast.show();
                                                                               } else {
-                                                                                  uncomplete.setChecked(false);
+                                                                                  uncomplete.setChecked(false); //uncheck checkbox
                                                                               }
                                                                           }
+                                                                          //No internet connection
                                                                           else {
-                                                                              uncomplete.setChecked(false);
+                                                                              uncomplete.setChecked(false); //uncheck checkbox if no internet connection
+                                                                              //display message
                                                                               Context context = getApplicationContext();
                                                                               CharSequence text = "No Internet Connection - Please connect and try again";
                                                                               int duration = Toast.LENGTH_LONG;
@@ -343,18 +379,17 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                                                   }
                             );
 
-                            customerID = thisBooking.getCustomerID();
-                            installTypeID = thisBooking.getInstallTypeID();
-                            //getCustomers();
-
                             String siteAddress = "";
+                            //Concatenate site address with site suburb and add with google navigation format
                             address.setText(thisBooking.getSiteAddress() + ", " + thisBooking.getSiteSuburb());
                             siteAddress = "google.navigation:q=" + thisBooking.getSiteAddress() + "+ Auckland";
 
-                            final String finalSiteAddress = siteAddress;
+                            final String finalSiteAddress = siteAddress; //set final variable
+                            //set on click listener for address button
                             addressButton.setOnClickListener(new View.OnClickListener() {
                                 //@Override
                                 public void onClick(View v) {
+                                    //open google maps app with site address
                                     Uri gmmIntentUri = Uri.parse(finalSiteAddress);
                                     Intent mapIntent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
                                     mapIntent.setPackage("com.google.android.apps.maps");
@@ -362,34 +397,46 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                 }
                             });
 
-                                customerFirstLastName.setText(thisBooking.getFirstName() + " " + thisBooking.getLastName());
+                            //Get and concatenate customers first and last name and set textviews text
+                            customerFirstLastName.setText(thisBooking.getFirstName() + " " + thisBooking.getLastName());
+                            //get and set email address textview text
+                            emailAddress.setText(thisBooking.getEmail());
 
-                                if(!thisBooking.getPhone().equals("NULL")){
-                                    homePhoneNumber.setText(thisBooking.getPhone());
-                                    isHomePhone = true;
-                                }
-                                if (thisBooking.getPhone().equals("NULL")){
-                                    isHomePhone = false;
-                                }
-                                if(!thisBooking.getMobile().equals("NULL")){
-                                    mobilePhoneNumber.setText(thisBooking.getMobile());
-                                    isMobilePhone = true;
-                                }
-                                if (thisBooking.getPhone().equals("NULL")){
-                                    isMobilePhone = true;
-                                }
+                            //check that home phone isn't null
+                            if (!thisBooking.getPhone().equals("NULL")) {
+                                //get and set home phone text view
+                                homePhoneNumber.setText(thisBooking.getPhone());
+                                isHomePhone = true; //home phone isn't null
+                            }
+                            //Home phone number is empty
+                            if (thisBooking.getPhone().equals("NULL")) {
+                                isHomePhone = false;
+                            }
+                            //check that mobile phone isn't null
+                            if (!thisBooking.getMobile().equals("NULL")) {
+                                //get and set mobile phone text view
+                                mobilePhoneNumber.setText(thisBooking.getMobile());
+                                isMobilePhone = true; //mobile phone isn't null
+                            }
+                            //Mobile phone is empty
+                            if (thisBooking.getPhone().equals("NULL")) {
+                                isMobilePhone = true;
+                            }
 
-                                emailAddress.setText(thisBooking.getEmail());
-
+                            //Set home phone button on click listener
                             homePhone.setOnClickListener(new View.OnClickListener() {
                                 //@Override
                                 public void onClick(View v) {
 
-                                    TelephonyManager tm= (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-                                    if(tm.getPhoneType()==TelephonyManager.PHONE_TYPE_NONE){
-                                        //No calling functionality
-                                        Context context = getApplicationContext();
+                                    phoneSelected = "home"; //home phone selected
 
+                                    //Check that this device can be called from (e.g not tablet)
+                                    TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                                    assert tm != null;
+
+                                    if (tm.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
+                                        //No calling functionality, display error message
+                                        Context context = getApplicationContext();
                                         CharSequence text = "No calling functionality on this device";
                                         int duration = Toast.LENGTH_SHORT;
 
@@ -397,9 +444,13 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                         toast.show();
 
                                     }
+                                    //Device is callable
                                     else {
 
+                                        //check that there is a home phone number
                                         if (isHomePhone) {
+
+                                            //Check for permission to call number, call if permission allowed
                                             Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + homePhoneNumber.getText()));
 
                                             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -411,7 +462,10 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                             } else {
                                                 startActivity(intent);
                                             }
-                                        } else {
+                                        }
+                                        //No home phone number
+                                        else {
+                                            //display error message
                                             Context context = getApplicationContext();
 
                                             CharSequence text = "No Home Phone Number";
@@ -424,64 +478,91 @@ public class BookingDetailsActivity extends AppCompatActivity {
                                 }
                             });
 
+                            //Set mobile phone button on click listener
                             mobilePhone.setOnClickListener(new View.OnClickListener() {
                                 //@Override
                                 public void onClick(View v) {
-                                    if(isMobilePhone) {
-                                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
 
-                                        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                            if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                                                ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
-                                            } else {
-                                                startActivity(intent);
-                                            }
-                                        } else {
-                                            startActivity(intent);
-                                        }
-                                    }
-                                    else {
+                                    phoneSelected = "mobile"; //mobile phone selected
+
+                                    //Check that this device can be called from (e.g not tablet)
+                                    TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                                    assert tm != null;
+
+                                    if (tm.getPhoneType() == TelephonyManager.PHONE_TYPE_NONE) {
+                                        //No calling functionality, display error message
                                         Context context = getApplicationContext();
-
-                                        CharSequence text = "No Mobile Phone Number";
+                                        CharSequence text = "No calling functionality on this device";
                                         int duration = Toast.LENGTH_SHORT;
 
                                         Toast toast = Toast.makeText(context, text, duration);
                                         toast.show();
+
+                                    }
+                                    //Device is callable
+                                    else {
+
+                                        //check that there is a mobile phone number
+                                        if (isMobilePhone) {
+
+                                            //Check for permission to call number, call if permission allowed
+                                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + mobilePhoneNumber.getText()));
+
+                                            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                if (ContextCompat.checkSelfPermission(BookingDetailsActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                                                    ActivityCompat.requestPermissions(BookingDetailsActivity.this, new String[]{Manifest.permission.CALL_PHONE}, REQUEST_PHONE_CALL);
+                                                } else {
+                                                    startActivity(intent);
+                                                }
+                                            } else {
+                                                startActivity(intent);
+                                            }
+                                        }
+                                        //No mobile phone number
+                                        else {
+                                            //display error message
+                                            Context context = getApplicationContext();
+
+                                            CharSequence text = "No Mobile Phone Number";
+                                            int duration = Toast.LENGTH_SHORT;
+
+                                            Toast toast = Toast.makeText(context, text, duration);
+                                            toast.show();
+                                        }
                                     }
                                 }
                             });
 
-                            String thisFireType = thisBooking.getFireType();
-                            fireType.setText(thisFireType);
-
-                            String installDescription = "";
-                            installDescription = thisBooking.getInstallDescription();
-                            installType.setText(installDescription);
+                            //get and set fire type textview text
+                            fireType.setText(thisBooking.getFireType());
+                            //get and set install type description text view text
+                            installType.setText(thisBooking.getInstallDescription());
                         }
                     }
                 });
 
-        bv.setBoo(true);
+        bv.setBoo(); //stop loading, process is finished
     }
 
-    private void stockList(String stockList){
+    //Method for converting string to tool list in alert dialog pop-up
+    private void stockList(String stockList) {
 
-        if(!stockList.isEmpty()) {
+        //Check that given string isn't empty
+        if (!stockList.isEmpty()) {
 
-            List<String> stockListArray = new ArrayList<String>();
-
-            Context context = getApplicationContext();
-
+            //create alert dialog
             AlertDialog.Builder builderSingle = new AlertDialog.Builder(BookingDetailsActivity.this);
-            builderSingle.setTitle("Tool List");
+            builderSingle.setTitle("Tool List"); //set title
 
+            //Set array adaptor for layout of list
             final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(BookingDetailsActivity.this, android.R.layout.select_dialog_singlechoice);
+            //split string when , appears and add to string list
             String[] items = stockList.split(",");
+            //go through list and add each item to the adaptor
             for (String item : items) {
                 arrayAdapter.add(item);
             }
-
+            //set button to OK
             builderSingle.setNegativeButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -492,21 +573,11 @@ public class BookingDetailsActivity extends AppCompatActivity {
             builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    /*String strName = arrayAdapter.getItem(which);
-                    AlertDialog.Builder builderInner = new AlertDialog.Builder(BookingDetailsActivity.this);
-                    builderInner.setMessage(strName);
-                    builderInner.setTitle("Stocklist");
-                    builderInner.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog,int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builderInner.show();*/
                 }
             });
             builderSingle.show();
         }
+        //String is empty, show error message
         else {
 
             Context context = getApplicationContext();
@@ -518,21 +589,22 @@ public class BookingDetailsActivity extends AppCompatActivity {
         }
     }
 
-    public void PostInstallComplete(){
+    //Method for updating installation status to complete in db
+    public void PostInstallComplete() {
 
         RequestParams params = new RequestParams();
-        params.put("InstallComplete", installComplete);
-        params.put("InstallID", installIDInt);
+        params.put("InstallComplete", installComplete); //post install complete
+        params.put("InstallID", installIDInt); //post install ID
         params.setUseJsonStreamer(true);
 
+        //async post request
         WCHRestClient.post("/addInstallComplete", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                //display success message
                 Context context = getApplicationContext();
-
                 CharSequence text = "Installation Status Updated";
                 int duration = Toast.LENGTH_SHORT;
-
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
@@ -543,16 +615,19 @@ public class BookingDetailsActivity extends AppCompatActivity {
         });
     }
 
-    public void PostInstallerNote(){
+    //Method for adding installer note to db
+    public void PostInstallerNote() {
 
         RequestParams params = new RequestParams();
-        params.put("InstallerNote", note);
-        params.put("InstallID", installIDInt);
+        params.put("InstallerNote", note); //post note
+        params.put("InstallID", installIDInt); //post install id as an int
         params.setUseJsonStreamer(true);
 
+        //async post request
         WCHRestClient.post("/addinstallernote", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                //display alert dialog pop-up of success message
                 Context context = getApplicationContext();
                 AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -560,29 +635,28 @@ public class BookingDetailsActivity extends AppCompatActivity {
                 } else {
                     builder = new AlertDialog.Builder(context);
                 }
-                builder.setTitle("Installer Note Added")
+                builder.setTitle("Installer Note Added") //set pop-up title
+                        //set pop-up button as OK
                         .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                             }
                         })
-                        //.setIcon(android.R.drawable.d)
                         .show();
             }
-
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
             }
         });
     }
 
-    private void load(){
+    //Method for showing loading progress wheel
+    private void load() {
 
         //create progress wheel
-        final ProgressDialog dialog = new ProgressDialog(BookingDetailsActivity.this); // this = YourActivity
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("Loading. Please wait...");
+        final ProgressDialog dialog = new ProgressDialog(BookingDetailsActivity.this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); //show spinner
+        dialog.setMessage("Loading. Please wait..."); //show message
         dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(true);
         dialog.show();
 
         bv = new BooVariable(); //instantiate boolean variable

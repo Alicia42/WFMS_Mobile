@@ -1,5 +1,11 @@
 package com.example.alici.wfms_mobile;
 
+/*
+ * Created by Alicia Craig on 11/9/17.
+ * Description: Main activity class that is displayed on app-launch. Starts with login functionality
+ */
+
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -14,32 +20,27 @@ import org.json.JSONArray;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import java.util.List;
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.io.IOException;
-import android.util.Base64;
+
 import android.widget.EditText;
 import android.widget.Toast;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import java.io.UnsupportedEncodingException;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     public BooVariable bv;
-    private String SHAHash;
-    public static int NO_OPTIONS=0;
     private EditText username;
     private EditText passwordTxtBx;
     public String md5Hash;
     public String usernameString;
 
-    public static class User{
+    //Sets the User ID on login and can be used globally in the app
+    static class User{
 
-        public static int userID;
+        static int userID;
 
     }
 
@@ -48,30 +49,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //initialise edit texts and button
         username = (EditText) findViewById(R.id.usernameTxtBx);
         passwordTxtBx = (EditText) findViewById(R.id.passwordTxtBx);
-
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mWifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
         Button loginBtn = (Button) findViewById(R.id.loginBtn);
-        loginBtn.setOnClickListener(this);
-
-
-        //getCustomers();
-        //getDates();
-        //getTimes();
-        //getAuthentication();
-        //getUserAccounts();
-        //getInstallTypes();
-        //getSales();
-        //getInstalls();
-        //getFires();
-        //getFollowUpComments();
-        //getSchedules();
+        loginBtn.setOnClickListener(this); //set button on click listener
 
     }
 
+    //Method for hashing the password entered to MD5 format
     public void computeMD5Hash(String password)
     {
 
@@ -81,18 +67,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             digest.update(password.getBytes());
             byte messageDigest[] = digest.digest();
 
-            StringBuffer MD5Hash = new StringBuffer();
-            for (int i = 0; i < messageDigest.length; i++)
-            {
-                String h = Integer.toHexString(0xFF & messageDigest[i]);
+            StringBuilder MD5Hash = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                StringBuilder h = new StringBuilder(Integer.toHexString(0xFF & aMessageDigest));
                 while (h.length() < 2)
-                    h = "0" + h;
+                    h.insert(0, "0");
                 MD5Hash.append(h);
             }
 
-            //result.setText("MD5 hash generated is: " + " " + MD5Hash);
-            md5Hash = MD5Hash.toString();
-            Log.i("MD5 Hash", md5Hash);
+            md5Hash = MD5Hash.toString(); //set global variable of hashed password
 
         }
         catch (NoSuchAlgorithmException e)
@@ -103,31 +86,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //Method for checking wifi and mobile network connection
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
+            //check wifi connection
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
                 if (ni.isConnected())
-                    haveConnectedWifi = true;
+                    haveConnectedWifi = true; //wifi connection is there
+            //check mobile network connection
             if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
                 if (ni.isConnected())
-                    haveConnectedMobile = true;
+                    haveConnectedMobile = true; //mobile network connection is there
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
 
+    //Method for when login button is clicked
     public void onClick(View v) {
 
+        //Check that there is internet connection
         if(haveNetworkConnection()){
-            usernameString = String.valueOf(username.getText());
-            computeMD5Hash(passwordTxtBx.getText().toString() + usernameString);
-            getUserAccounts();
+            usernameString = String.valueOf(username.getText()); //get username from text view
+            computeMD5Hash(passwordTxtBx.getText().toString() + usernameString); //hash password with username
+            getUserAccounts(); //get user accounts
         }
+        //No internet connection
         else {
+            //Display error message
             Context context = getApplicationContext();
             CharSequence text = "No Internet Connection - Please connect to login";
             int duration = Toast.LENGTH_LONG;
@@ -137,18 +128,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    private void load(){
+    //Method for showing loading progress wheel
+    private void load() {
 
         //create progress wheel
-        final ProgressDialog dialog = new ProgressDialog(MainActivity.this); // this = YourActivity
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setMessage("Loading. Please wait...");
+        final ProgressDialog dialog = new ProgressDialog(MainActivity.this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER); //show spinner
+        dialog.setMessage("Loading. Please wait..."); //show message
         dialog.setIndeterminate(true);
-        dialog.setCanceledOnTouchOutside(true);
         dialog.show();
-
-        //PrimeThread p = new PrimeThread(); //create thread for database queries
-        //p.start(); //start thread
 
         bv = new BooVariable(); //instantiate boolean variable
         //set listener for variable changes
@@ -162,38 +150,47 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    //Method for getting user account details
     private void getUserAccounts() {
 
-        load();
+        load(); //loading wheel just in case it takes long to grab data (use to be slow)
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
+        //async request for getting sever data
         WCHRestClient.get(MainActivity.this, "/getuseraccounts", headers.toArray(new Header[headers.size()]),
                 null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
-                        User user = new User();
+                        //create new user account object
                         User_Account user_account = new User_Account();
 
+                        //set user id to id returned from method in user account class
                         User.userID = user_account.getUserID(response, md5Hash, usernameString);
+
+                        //Check that login details are correct
                         if(user_account.checkLoginDetails(response, md5Hash, usernameString)){
 
+                            //get role type of logged in user
                             String roleType = user_account.getRoleType(response, md5Hash, usernameString);
 
+                            //If salesperson or shop logs in, show customer digital entry form
                             if(roleType.equals("Salesperson") || roleType.equals("Shop")) {
                                 Intent intent = new Intent(MainActivity.this, NewCustomerFormActivity.class);
-                                startActivity(intent);
-                                username.setText("");
-                                passwordTxtBx.setText("");
+                                startActivity(intent); //start intent
+                                username.setText(""); //reset username text view
+                                passwordTxtBx.setText(""); //reset password text view
                             }
+                            //If installer logs in, show scheduled bookings form
                             if(roleType.equals("Installer")){
                                 Intent intent = new Intent(MainActivity.this, GetCalendarItems.class);
                                 startActivity(intent);
                                 username.setText("");
                                 passwordTxtBx.setText("");
                             }
+                            //Don't let Admin login, show error message
                             if(roleType.equals("Admin")) {
                                 Context context = getApplicationContext();
                                 CharSequence text = "Please sign in as either a Salesperson, Shop or Installer";
@@ -203,7 +200,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 toast.show();
                             }
                         }
+                        //Otherwise, login details are incorrect
                         else {
+                            //show error  message
                             Context context = getApplicationContext();
                             CharSequence text = "Incorrect Login Details";
                             int duration = Toast.LENGTH_SHORT;
@@ -214,198 +213,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                     }
                 });
-        bv.setBoo(true);
-    }
-
-    private void getAuthentication() {
-
-        load();
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getauthentication", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Authenticate authenticate = new Authenticate();
-                        authenticate.getAuthentication(response, md5Hash);
-                    }
-                });
-        bv.setBoo(true);
-    }
-
-    private void getCustomers() {
-
-        load();
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getcustomers", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Customer customer = new Customer();
-                        customer.getCustomers(response);
-                    }
-                });
-
-        bv.setBoo(true);
-    }
-
-
-    private void getDates() {
-
-        load();
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getdatetable", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        DateTable dateTable = new DateTable();
-                        dateTable.getDates(response);
-                    }
-                });
-
-        bv.setBoo(true);
-    }
-
-    private void getTimes() {
-
-        load();
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/gettimetable", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        TimeTable timeTable = new TimeTable();
-                        timeTable.getTimes(response);
-                    }
-                });
-
-        bv.setBoo(true);
-    }
-
-
-    private void getInstallTypes() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getinstalltypes", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Install_Type install_type = new Install_Type();
-                        install_type.getInstallTypes(response);
-                    }
-                });
-        bv.setBoo(true);
-    }
-
-    private void getSales() {
-
-        load();
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getsales", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Sale sale = new Sale();
-                        sale.getSales(response);
-                    }
-                });
-
-        bv.setBoo(true);
-    }
-
-    private void getInstalls() {
-
-        load();
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getinstalls", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Install install = new Install();
-                        install.getInstalls(response);
-                    }
-                });
-
-        bv.setBoo(true);
-    }
-
-    private void getFires() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getfires", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Fire fire = new Fire();
-                        fire.getFires(response);
-                    }
-                });
-        bv.setBoo(true);
-    }
-
-    private void getFollowUpComments() {
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getfollowupcomments", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Follow_Up_Comment follow_up_comment = new Follow_Up_Comment();
-                        follow_up_comment.getFollowUpComments(response);
-                    }
-                });
-
-        bv.setBoo(true);
-    }
-
-    private void getSchedules() {
-
-        load();
-
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new BasicHeader("Accept", "application/json"));
-
-        WCHRestClient.get(MainActivity.this, "/getschedules", headers.toArray(new Header[headers.size()]),
-                null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-
-                        Schedule schedule = new Schedule();
-                        schedule.getSchedules(response);
-                    }
-                });
-
-        bv.setBoo(true);
+        bv.setBoo(); //stop loading, process is finished
     }
 
 }

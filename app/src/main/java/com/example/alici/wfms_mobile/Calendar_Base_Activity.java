@@ -1,16 +1,12 @@
 package com.example.alici.wfms_mobile;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.graphics.RectF;
-import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +21,22 @@ import com.alamkanak.weekview.WeekViewEvent;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
+/*
+Copyright 2014 Raquib-ul-Alam
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
 
 public abstract class Calendar_Base_Activity extends AppCompatActivity implements WeekView.EventClickListener, MonthLoader.MonthChangeListener, WeekView.EventLongPressListener, WeekView.EmptyViewLongPressListener {
     private static final int TYPE_DAY_VIEW = 1;
@@ -144,6 +156,7 @@ public abstract class Calendar_Base_Activity extends AppCompatActivity implement
         });
     }
 
+    @SuppressLint("DefaultLocale")
     protected String getEventTitle(Calendar time) {
         return String.format("Event of %02d:%02d %s/%d", time.get(Calendar.HOUR_OF_DAY), time.get(Calendar.MINUTE), time.get(Calendar.MONTH)+1, time.get(Calendar.DAY_OF_MONTH));
     }
@@ -153,6 +166,7 @@ public abstract class Calendar_Base_Activity extends AppCompatActivity implement
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
@@ -168,16 +182,20 @@ public abstract class Calendar_Base_Activity extends AppCompatActivity implement
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
 
+        //Check if there's internet connection and display booking details activity
         if(haveNetworkConnection()) {
             Toast.makeText(this, "Clicked " + event.getName(), Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(Calendar_Base_Activity.this, BookingDetailsActivity.class);
+            //Add info to intent
             Bundle extras = new Bundle();
-            extras.putString("customerName", event.getName());
-            extras.putString("installID", String.valueOf(event.getId()));
+            extras.putString("customerName", event.getName()); //add customer name
+            extras.putString("installID", String.valueOf(event.getId())); //add install id
             intent.putExtras(extras);
-            startActivity(intent);
+            startActivity(intent); //start activity
         }
+        //no internet connection
         else{
+            //display error message
             Context context = getApplicationContext();
             CharSequence text = "No Internet Connection - Please connect and try again";
             int duration = Toast.LENGTH_LONG;

@@ -135,12 +135,12 @@
             android:id="@+id/unCompleteChkBx"
             android:layout_width="152dp"
             android:layout_height="31dp"
-            android:text="Uncomplete"
+            android:layout_marginTop="467dp"
+            android:text="Incomplete"
+            app:layout_constraintHorizontal_bias="0.366"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="467dp"
-            app:layout_constraintHorizontal_bias="0.366" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <CheckBox
             android:id="@+id/completeCheckBx"

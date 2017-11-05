@@ -1,12 +1,15 @@
 package com.example.alici.wfms_mobile;
 
-import android.graphics.drawable.ColorDrawable;
+/*
+ * Created by Alicia Craig on 11/9/17.
+ * Description: New customer digital entry form activity for registering customers into the system
+ */
+
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Button;
@@ -15,22 +18,13 @@ import android.text.Editable;
 import android.widget.Toast;
 import android.view.View;
 import android.view.View.OnClickListener;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.net.URL;
 
-import android.os.AsyncTask;
-
 import org.json.JSONException;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,24 +32,15 @@ import android.content.Context;
 import android.os.Build;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.app.ActionBar;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import android.graphics.Color;
-
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.entity.StringEntity;
 import cz.msebera.android.httpclient.message.BasicHeader;
-import cz.msebera.android.httpclient.protocol.HTTP;
 
 import android.app.Activity;
-import android.widget.Toolbar;
-
-import javax.net.ssl.HttpsURLConnection;
 
 
 public class NewCustomerFormActivity extends AppCompatActivity {
@@ -72,10 +57,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
     private EditText postalAddress;
     private EditText postalSuburb;
     private EditText postalAreaCode;
-    private Button createCustomerBtn;
     public Boolean customerExists = false;
-    public Boolean customerUpdated = false;
-    private Button cancelBtn;
 
     public URL url;
     public int customerID;
@@ -86,146 +68,202 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         setContentView(R.layout.activity_new_customer_form);
         Activity activity = NewCustomerFormActivity.this;
         activity.setTitle("Register New Customer");
-        registerViews();
+        InitialiseComponents();
     }
 
+    //Method for initialising GUI components
+    private void InitialiseComponents() {
 
-    private void registerViews() {
-
+        //set up listener for checking first name validation
         firstName = (EditText) findViewById(R.id.fNameTxtBx);
-        // TextWatcher would let us check validation error on the fly
         firstName.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(firstName);
-                CustomerFormValidation.isFirstName(firstName, true);
+                CustomerFormValidation.hasText(firstName); //check not empty
+                CustomerFormValidation.isFirstName(firstName); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking last name validation
         lastName = (EditText) findViewById(R.id.lNameTxtBx);
-        // TextWatcher would let us check validation error on the fly
         lastName.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(lastName);
-                CustomerFormValidation.isLastName(lastName, true);
+                CustomerFormValidation.hasText(lastName); //check not empty
+                CustomerFormValidation.isLastName(lastName); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking email address validation
         EmailAddress = (EditText) findViewById(R.id.emailTxtBx);
         EmailAddress.addTextChangedListener(new TextWatcher() {
-            // after every change has been made to this editText, we would like to check validity
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(EmailAddress);
-                CustomerFormValidation.isEmailAddress(EmailAddress, true);
+                CustomerFormValidation.hasText(EmailAddress); //check not empty
+                CustomerFormValidation.isEmailAddress(EmailAddress); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking home phone number validation
         HomeNumber = (EditText) findViewById(R.id.hNumberTxtBx);
         HomeNumber.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.isHomePhoneNumber(HomeNumber, true);
+                CustomerFormValidation.isHomePhoneNumber(HomeNumber); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking mobile phone number validation
         MobileNumber = (EditText) findViewById(R.id.mNumberTxtBx);
         MobileNumber.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.isMobileNumber(MobileNumber, true);
+                CustomerFormValidation.isMobileNumber(MobileNumber); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking address validation
         address = (EditText) findViewById(R.id.addressTxtBx);
         address.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(address);
-                CustomerFormValidation.isAddress(address, true);
+                CustomerFormValidation.hasText(address); //check not empty
+                CustomerFormValidation.isAddress(address); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking suburb validation
         suburb = (EditText) findViewById(R.id.suburbTxtBx);
         suburb.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(suburb);
-                CustomerFormValidation.isSuburb(suburb, true);
+                CustomerFormValidation.hasText(suburb); //check not empty
+                CustomerFormValidation.isSuburb(suburb); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking area code validation
         areaCode = (EditText) findViewById(R.id.areaCodeTxtBx);
         areaCode.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(areaCode);
-                CustomerFormValidation.isAreaCode(areaCode, true);
+                CustomerFormValidation.hasText(areaCode); //check not empty
+                CustomerFormValidation.isAreaCode(areaCode); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking postal address validation
         postalAddress = (EditText) findViewById(R.id.pAddressTxtBx);
         postalAddress.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(postalAddress);
-                CustomerFormValidation.isAddress(postalAddress, true);
+                CustomerFormValidation.hasText(postalAddress); //check not empty
+                CustomerFormValidation.isAddress(postalAddress); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
 
+        //set up listener for checking postal suburb validation
         postalSuburb = (EditText) findViewById(R.id.pSuburbTxtBx);
         postalSuburb.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(postalSuburb);
-                CustomerFormValidation.isSuburb(postalSuburb, true);
+                CustomerFormValidation.hasText(postalSuburb); //check not empty
+                CustomerFormValidation.isSuburb(postalSuburb); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
+
+        //set up listener for checking postal area code validation
         postalAreaCode = (EditText) findViewById(R.id.pAreaCodeTxtBx);
         postalAreaCode.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                CustomerFormValidation.hasText(postalAreaCode);
-                CustomerFormValidation.isAreaCode(postalAreaCode, true);
+                CustomerFormValidation.hasText(postalAreaCode); //check not empty
+                CustomerFormValidation.isAreaCode(postalAreaCode); //check correct input
             }
-            public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            public void onTextChanged(CharSequence s, int start, int before, int count){}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
         });
+
+        //set up listener for when same as postal checkbox is clicked
         sameAddChBx = (CheckBox) findViewById(R.id.sameAddChBx);
         sameAddChBx.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                if(sameAddChBx.isChecked()){
+                if (sameAddChBx.isChecked()) {
 
-                    if(CustomerFormValidation.hasText(areaCode) || CustomerFormValidation.hasText(suburb) ||CustomerFormValidation.hasText(address)) {
-                        System.out.println("Checked");
-                        postalAddress.setText(address.getText());
-                        postalSuburb.setText(suburb.getText());
-                        postalAreaCode.setText(areaCode.getText());
+                    //Check that all required fields aren't empty
+                    if (CustomerFormValidation.hasText(areaCode) || CustomerFormValidation.hasText(suburb) || CustomerFormValidation.hasText(address)) {
+                        postalAddress.setText(address.getText()); //set postal address text
+                        postalSuburb.setText(suburb.getText());  //set postal suburb text
+                        postalAreaCode.setText(areaCode.getText());  //set postal area code text
                     }
 
-                }else{
-                    System.out.println("Un-Checked");
-                    postalAddress.setText("");
-                    postalSuburb.setText("");
-                    postalAreaCode.setText("");
+                }
+                //Uncheck box and reset fields
+                else {
+                    postalAddress.setText(""); //set to empty
+                    postalSuburb.setText(""); //set to empty
+                    postalAreaCode.setText(""); //set to empty
                 }
             }
         });
 
-        createCustomerBtn = (Button) findViewById(R.id.registerBtn);
+        Button createCustomerBtn = (Button) findViewById(R.id.registerBtn);
         createCustomerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -233,10 +271,11 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                 Validation class will check the error and display the error on respective fields
                 but it won't resist the form submission, so we need to check again before submit
                  */
-                if ( checkValidation () ) {
+                if (checkValidation()) {
 
-
+                    //check for internet connection
                     if (!haveNetworkConnection()) {
+                        //display error message
                         Context context = getApplicationContext();
                         CharSequence text = "No Internet Connection - Please connect and try again";
                         int duration = Toast.LENGTH_LONG;
@@ -244,20 +283,24 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     }
+                    //has internet connection,submit form
                     else {
                         submitForm();
                     }
                 }
+                //Errors in form, display message
                 else
-                    Toast.makeText(NewCustomerFormActivity.this, "Form contains error", Toast.LENGTH_LONG).show();
+                    Toast.makeText(NewCustomerFormActivity.this, "Please fix errors where marked", Toast.LENGTH_LONG).show();
             }
         });
 
-        cancelBtn = (Button) findViewById(R.id.CancelBtn);
+        //set on click listener for cancel button
+        Button cancelBtn = (Button) findViewById(R.id.CancelBtn);
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
+                //Create alert dialog pop-up to confirm cancellation
                 Context context = getApplicationContext();
                 AlertDialog.Builder builder;
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -265,82 +308,106 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                 } else {
                     builder = new AlertDialog.Builder(context);
                 }
-                builder.setTitle("Warning")
-                        .setMessage("Are you sure you want to cancel?")
+                builder.setTitle("Warning") //set title
+                        .setMessage("Are you sure you want to cancel?") //confirm cancellation
+                        //YES button - close form
                         .setPositiveButton("YES", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 Intent intent = new Intent(NewCustomerFormActivity.this, MainActivity.class);
-                                startActivity(intent);
-                                finish();
+                                startActivity(intent); //open login page
+                                finish(); //finish current activity
                             }
                         })
+                        //NO button - close message and do nothing
                         .setNegativeButton("NO", new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                             }
                         })
-                        //.setIcon(android.R.drawable.d)
                         .show();
             }
         });
     }
 
+    //Method for checking input validation before on submission of form
     private boolean checkValidation() {
-        boolean ret = true;
+        boolean result = true;
 
-        if (!CustomerFormValidation.hasText(firstName)) ret = false;
-        if (!CustomerFormValidation.isEmailAddress(EmailAddress, true)) ret = false;
-        if (!CustomerFormValidation.isFirstName(firstName, true)) ret = false;
-        if (!CustomerFormValidation.isLastName(lastName, true)) ret = false;
-        /*if(CustomerFormValidation.hasText(HomeNumber) || !CustomerFormValidation.hasText(MobileNumber)){
-            ret = false;
-        }*/
-        if (!CustomerFormValidation.isAddress(address, true)) ret = false;
-        if (!CustomerFormValidation.isAddress(postalAddress, true)) ret = false;
-        if (!CustomerFormValidation.isSuburb(suburb, true)) ret = false;
-        if (!CustomerFormValidation.isSuburb(postalSuburb, true)) ret = false;
-        if (!CustomerFormValidation.isAreaCode(areaCode, true)) ret = false;
-        if (!CustomerFormValidation.isAreaCode(postalAreaCode, true)) ret = false;
+        if (!CustomerFormValidation.hasText(EmailAddress)) result = false;
+        if (!CustomerFormValidation.hasText(firstName)) result = false;
+        if (!CustomerFormValidation.hasText(lastName)) result = false;
+        if (!CustomerFormValidation.hasText(address)) result = false;
+        if (!CustomerFormValidation.hasText(postalAddress)) result = false;
+        if (!CustomerFormValidation.hasText(suburb)) result = false;
+        if (!CustomerFormValidation.hasText(postalSuburb)) result = false;
+        if (!CustomerFormValidation.hasText(areaCode)) result = false;
+        if (!CustomerFormValidation.hasText(postalAreaCode)) result = false;
 
-        return ret;
+        if (!CustomerFormValidation.isEmailAddress(EmailAddress)) result = false;
+        if (!CustomerFormValidation.isFirstName(firstName)) result = false;
+        if (!CustomerFormValidation.isLastName(lastName)) result = false;
+        if (!CustomerFormValidation.isAddress(address)) result = false;
+        if (!CustomerFormValidation.isAddress(postalAddress)) result = false;
+        if (!CustomerFormValidation.isSuburb(suburb)) result = false;
+        if (!CustomerFormValidation.isSuburb(postalSuburb)) result = false;
+        if (!CustomerFormValidation.isAreaCode(areaCode)) result = false;
+        if (!CustomerFormValidation.isAreaCode(postalAreaCode)) result = false;
+
+        return result;
     }
 
+    //Method for checking wifi and mobile network connection
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
 
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert cm != null;
         NetworkInfo[] netInfo = cm.getAllNetworkInfo();
         for (NetworkInfo ni : netInfo) {
+            //check wifi connection
             if (ni.getTypeName().equalsIgnoreCase("WIFI"))
                 if (ni.isConnected())
-                    haveConnectedWifi = true;
+                    haveConnectedWifi = true; //wifi connection is there
+            //check mobile network connection
             if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
                 if (ni.isConnected())
-                    haveConnectedMobile = true;
+                    haveConnectedMobile = true; //mobile network connection is there
         }
         return haveConnectedWifi || haveConnectedMobile;
     }
 
+    //Method for submitting form
+    private void submitForm() {
+        // Submit your form here. your form is valid
+        Toast.makeText(this, "Checking details...", Toast.LENGTH_LONG).show();
+
+        //check if customer exists
+        getCustomers();
+    }
+
+    //Method for getting customer details
     private void getCustomers() {
 
         List<Header> headers = new ArrayList<Header>();
         headers.add(new BasicHeader("Accept", "application/json"));
 
+        //async request for getting sever data
         WCHRestClient.get(NewCustomerFormActivity.this, "/getcustomers", headers.toArray(new Header[headers.size()]),
                 null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
 
+                        //check if customer exists
                         customerExists = findCustomer(response);
 
-                        if(!customerExists) {
-                            Log.i("same", String.valueOf(customerExists));
-                            //PrimeThread p = new PrimeThread(); //create thread for database queries
-                            //p.start(); //start thread
+                        //Add customer to db if the customer doesn't exist
+                        if (!customerExists) {
                             PostCustomer();
                         }
-
+                        //Customer exists, don't add
                         else {
+
+                            //Create alert dialog pop-up
                             Context context = getApplicationContext();
                             AlertDialog.Builder builder;
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -348,25 +415,26 @@ public class NewCustomerFormActivity extends AppCompatActivity {
                             } else {
                                 builder = new AlertDialog.Builder(context);
                             }
-                            builder.setTitle("Customer Already Exists")
+                            builder.setTitle("Customer Already Exists") //set title
+                                    //set message
                                     .setMessage("This customer already exists, please use the desktop application to update details if necessary")
+                                    //set OK button - do nothing
                                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                         }
                                     })
-                                    //.setIcon(android.R.drawable.d)
                                     .show();
                         }
                     }
                 });
     }
 
-    public boolean findCustomer(JSONArray response){
-
-        //customerExists = false;
+    //Method for checking if a customer exists in the db
+    public boolean findCustomer(JSONArray response) {
 
         ArrayList<Customer> customerArray = new ArrayList<Customer>();
 
+        //get JSON objects and add to array list
         for (int i = 0; i < response.length(); i++) {
             try {
                 customerArray.add(new Customer(response.getJSONObject(i)));
@@ -375,33 +443,29 @@ public class NewCustomerFormActivity extends AppCompatActivity {
             }
         }
 
+        //get the text from the edit text boxes
         String fname = String.valueOf(firstName.getText());
         String lname = String.valueOf(lastName.getText());
         String email = String.valueOf(EmailAddress.getText());
 
-        for (Customer customer : customerArray){
+        //If a customer in the array matches the first name, last name and email address, return true (does exist)
+        for (Customer customer : customerArray) {
 
-            if (customer.getFirstName().equals(fname) && customer.getLastName().equals(lname) && customer.getEmail().equals(email)){
+            if (customer.getFirstName().equals(fname) && customer.getLastName().equals(lname) && customer.getEmail().equals(email)) {
 
                 return true;
             }
         }
 
+        //otherwise, return false (doesn't exist)
         return false;
 
-        //Log.i("result", String.valueOf(customerExists));
     }
 
+    //Method for posting Customer details to the server
+    public void PostCustomer() {
 
-    private void submitForm() {
-        // Submit your form here. your form is valid
-        Toast.makeText(this, "Submitting form...", Toast.LENGTH_LONG).show();
-
-        getCustomers();
-    }
-
-    public void PostCustomer(){
-
+        //set variables from edit text boxes
         Editable fName = firstName.getText();
         Editable lName = lastName.getText();
         Editable pAddress = postalAddress.getText();
@@ -413,6 +477,7 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         Editable sAddress = address.getText();
         Editable sSuburb = suburb.getText();
 
+        //Create param to post with customer details
         RequestParams params = new RequestParams();
         params.put("FirstName", fName);
         params.put("LastName", lName);
@@ -426,30 +491,33 @@ public class NewCustomerFormActivity extends AppCompatActivity {
         params.put("SiteSuburb", sSuburb);
         params.setUseJsonStreamer(true);
 
+        //async post request
         WCHRestClient.post("/addcustomersale", params, new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    Log.i("Success","Form Submitted");
-                    Context context = getApplicationContext();
-                    AlertDialog.Builder builder;
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
-                    } else {
-                        builder = new AlertDialog.Builder(context);
-                    }
-                    builder.setTitle("Registration Complete!")
-                            .setMessage("Thank you for registering")
-                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
 
-                                    Intent intent = new Intent(NewCustomerFormActivity.this, NewCustomerFormActivity.class);
-                                    startActivity(intent);
-                                    finish();
-                                }
-                            })
-                            //.setIcon(android.R.drawable.d)
-                            .show();
+                //Creare alert dialog pop-up to display success message
+                Context context = getApplicationContext();
+                AlertDialog.Builder builder;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder = new AlertDialog.Builder(NewCustomerFormActivity.this, R.style.myDialog);
+                } else {
+                    builder = new AlertDialog.Builder(context);
                 }
+                builder.setTitle("Registration Complete!") //set title
+                        .setMessage("Thank you for registering") //set message
+                        //set OK button
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                Intent intent = new Intent(NewCustomerFormActivity.this, NewCustomerFormActivity.class);
+                                startActivity(intent); //restart activity to reset form
+                                finish();
+                            }
+                        })
+                        //.setIcon(android.R.drawable.d)
+                        .show();
+            }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {

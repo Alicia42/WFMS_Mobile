@@ -1,12 +1,20 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
+    signingConfigs {
+        config {
+            keyAlias 'wchdomain1.duckdns.org'
+            keyPassword 'wchkeystorep'
+            storePassword 'wchkeystorep'
+            storeFile file('/Users/libbyjennings/Desktop/test.jks')
+        }
+    }
+    compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "com.example.alici.wfms_mobile"
         minSdkVersion 15
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -27,12 +35,10 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile files('libs/aws-android-sdk-cognito-2.6.2.jar')
-
-
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:26.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support:support-v4:25.3.1'
+    compile 'com.android.support:design:26.1.0'
+    compile 'com.android.support:support-v4:26.1.0'
     compile 'com.github.alamkanak:android-week-view:1.2.6'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'com.squareup.retrofit:retrofit:1.9.0'

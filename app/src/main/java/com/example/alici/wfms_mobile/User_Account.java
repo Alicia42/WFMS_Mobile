@@ -1,7 +1,8 @@
 package com.example.alici.wfms_mobile;
 
-/**
- * Created by libbyjennings on 23/09/17.
+/*
+ * Created by Libby Jennings on 23/09/17.
+ * Description: class for getting and setting user account details and returning requested user account details
  */
 
 import android.util.Log;
@@ -9,9 +10,7 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.ArrayList;
-
 
 public class User_Account {
 
@@ -23,8 +22,10 @@ public class User_Account {
     private boolean AccountActive;
     private String PasswordHash;
 
-    public User_Account(JSONObject object) {
+    //Constructor for initialising JSON objects from server
+    private User_Account(JSONObject object) {
         try {
+            //parse objects with data type and name
             this.UserID = object.getInt("UserID");
             this.AuthenticationID = object.getInt("AuthenticationID");
             this.UserName = object.getString("UserName");
@@ -38,51 +39,21 @@ public class User_Account {
         }
     }
 
-    public User_Account(int userID, int authenticationID, String userName, boolean accountActive) {
-        UserID = userID;
-        AuthenticationID = authenticationID;
-        UserName = userName;
-        AccountActive = accountActive;
-    }
-
-    public int getUserID() {
+    //getters and setters
+    private int getUserID() {
         return UserID;
     }
 
-    public void setUserID(int userID) {
-        UserID = userID;
-    }
-
-    public int getAuthenticationID() {
-        return AuthenticationID;
-    }
-
-    public void setAuthenticationID(int authenticationID) {
-        AuthenticationID = authenticationID;
-    }
-
-    public String getUserName() {
+    private String getUserName() {
         return UserName;
     }
 
-    public void setUserName(String userName) {
-        UserName = userName;
-    }
-
-    public boolean isAccountActive() {
+    private boolean isAccountActive() {
         return AccountActive;
     }
 
-    public void setAccountActive(boolean accountActive) {
-        AccountActive = accountActive;
-    }
-
-    public String getRoleType() {
+    private String getRoleType() {
         return RoleType;
-    }
-
-    public void setRoleType(String roleType) {
-        RoleType = roleType;
     }
 
     public boolean isInstall() {
@@ -93,18 +64,16 @@ public class User_Account {
         Install = install;
     }
 
-    public String getPasswordHash() {
+    private String getPasswordHash() {
         return PasswordHash;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        PasswordHash = passwordHash;
-    }
+    User_Account(){}
 
-    public User_Account(){}
+    //Method for checking login details are correct
+    boolean checkLoginDetails(JSONArray response, String hash, String username){
 
-    public boolean checkLoginDetails(JSONArray response, String hash, String username){
-
+        //get JSON objects and add to array list
         ArrayList<User_Account> user_accountArrayList = new ArrayList<User_Account>();
         boolean didMatch = false;
 
@@ -116,35 +85,29 @@ public class User_Account {
             }
         }
 
+        //If a user account matches the username and password and account is active, return true
         for (User_Account user_account : user_accountArrayList) {
 
             try {
 
                 if(user_account.getPasswordHash().equals(hash) && user_account.getUserName().equals(username) && user_account.isAccountActive()) {
-                    Log.i("Success", "Matched");
-                    String toString = String.valueOf(user_account.getAuthenticationID());
-                    Log.i("Authentication ID", toString);
-                    Log.i("Password Hash", user_account.getPasswordHash());
                     didMatch = true;
                 }
-                else{
-                    Log.i("Error", "Didn't match");
-                }
             }
-            catch (Exception e){
-
-                Log.i("Error","Field is null");
+            catch (Exception ignored){
             }
         }
 
         return didMatch;
     }
 
-    public String getRoleType(JSONArray response, String hash, String username){
+    //Method for returning the role type of a selected user account
+    String getRoleType(JSONArray response, String hash, String username){
 
         ArrayList<User_Account> user_accountArrayList = new ArrayList<User_Account>();
         String RoleType = "";
 
+        //get JSON objects and add to array list
         for (int i = 0; i < response.length(); i++) {
             try {
                 user_accountArrayList.add(new User_Account(response.getJSONObject(i)));
@@ -153,35 +116,29 @@ public class User_Account {
             }
         }
 
+        //If a user account matches the username and password and account is active, set the role type to return
         for (User_Account user_account : user_accountArrayList) {
 
             try {
 
                 if(user_account.getPasswordHash().equals(hash) && user_account.getUserName().equals(username) && user_account.isAccountActive()) {
-                    Log.i("Success", "Matched");
-                    String toString = String.valueOf(user_account.getAuthenticationID());
-                    Log.i("Authentication ID", toString);
-                    Log.i("Password Hash", user_account.getPasswordHash());
                     RoleType = user_account.getRoleType();
                 }
-                else{
-                    Log.i("Error", "Didn't match");
-                }
             }
-            catch (Exception e){
-
-                Log.i("Error","Field is null");
+            catch (Exception ignored){
             }
         }
 
         return RoleType;
     }
 
-    public int getUserID(JSONArray response, String hash, String username){
+    //Method for returning the user ID of a selected user account
+    int getUserID(JSONArray response, String hash, String username){
 
         ArrayList<User_Account> user_accountArrayList = new ArrayList<User_Account>();
         int userID = 0;
 
+        //get JSON objects and add to array list
         for (int i = 0; i < response.length(); i++) {
             try {
                 user_accountArrayList.add(new User_Account(response.getJSONObject(i)));
@@ -190,21 +147,16 @@ public class User_Account {
             }
         }
 
+        //If a user account matches the username and password and account is active, set the User ID to return
         for (User_Account user_account : user_accountArrayList) {
 
             try {
 
                 if(user_account.getPasswordHash().equals(hash) && user_account.getUserName().equals(username) && user_account.isAccountActive()) {
-                    Log.i("User ID", String.valueOf(user_account.getUserID()));
                     userID = user_account.getUserID();
                 }
-                else{
-                    Log.i("Error", "Didn't match");
-                }
             }
-            catch (Exception e){
-
-                Log.i("Error","Field is null");
+            catch (Exception ignored){
             }
         }
 
