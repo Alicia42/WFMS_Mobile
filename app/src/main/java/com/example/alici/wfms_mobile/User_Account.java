@@ -5,8 +5,6 @@ package com.example.alici.wfms_mobile;
  * Description: class for getting and setting user account details and returning requested user account details
  */
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

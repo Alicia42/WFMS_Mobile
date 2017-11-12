@@ -1,7 +1,8 @@
 package com.example.alici.wfms_mobile;
 
-/**
+/*
  * Created by Libby Jennings on 22/09/17.
+ * Description: Class for connecting, getting and posting requests to the web server
  */
 
 import android.content.Context;

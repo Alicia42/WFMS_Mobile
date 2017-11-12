@@ -3,10 +3,10 @@ apply plugin: 'com.android.application'
 android {
     signingConfigs {
         config {
-            keyAlias 'wchdomain1.duckdns.org'
+            keyAlias 'key'
             keyPassword 'wchkeystorep'
             storePassword 'wchkeystorep'
-            storeFile file('/Users/libbyjennings/Desktop/test.jks')
+            storeFile file('/Users/libbyjennings/Desktop/wfskeystore')
         }
     }
     compileSdkVersion 26

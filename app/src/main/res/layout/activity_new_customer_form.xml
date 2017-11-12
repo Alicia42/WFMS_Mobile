@@ -6,9 +6,9 @@
     android:id="@+id/scrollview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="#ffffff"
     android:fillViewport="true"
-    android:scrollbars="vertical"
-    android:background="#ffffff">
+    android:scrollbars="vertical">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -18,8 +18,8 @@
         <TextView
             android:id="@+id/ToolListTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:text="Contact Information"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             app:layout_constraintBottom_toTopOf="@+id/fNameTxtBx"
@@ -30,22 +30,24 @@
         <EditText
             android:id="@+id/fNameTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
+            android:layout_weight="0.5"
             android:hint="First Name*"
             android:inputType="textPersonName"
+            android:maxLength="15"
             app:layout_constraintBottom_toTopOf="@+id/hNumberTxtBx"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toLeftOf="@+id/lNameTxtBx"
             app:layout_constraintTop_toBottomOf="@+id/ToolListTxtBx" />
 
-       <EditText
+        <EditText
             android:id="@+id/lNameTxtBx"
-           android:layout_width="0dp"
-           android:layout_weight="0.5"
+            android:layout_width="0dp"
             android:layout_height="40dp"
+            android:layout_weight="0.5"
             android:hint="Last Name*"
             android:inputType="textPersonName"
+            android:maxLength="15"
             app:layout_constraintBottom_toTopOf="@+id/hNumberTxtBx"
             app:layout_constraintLeft_toRightOf="@+id/fNameTxtBx"
             app:layout_constraintRight_toRightOf="parent"
@@ -78,8 +80,8 @@
         <EditText
             android:id="@+id/emailTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
+            android:layout_weight="0.5"
             android:hint="Email*"
             android:inputType="textPhonetic"
             app:layout_constraintBottom_toTopOf="@+id/siteInfoTxt"
@@ -90,8 +92,8 @@
         <TextView
             android:id="@+id/siteInfoTxt"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:text="Site Information"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             app:layout_constraintBottom_toTopOf="@+id/addressTxtBx"
@@ -102,16 +104,16 @@
         <EditText
             android:id="@+id/addressTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
+            android:layout_weight="0.5"
             android:hint="Street Address*"
             android:inputType="textPostalAddress"
             android:maxLength="30"
             app:layout_constraintBottom_toTopOf="@+id/suburbTxtBx"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/siteInfoTxt"
-            app:layout_constraintHorizontal_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/siteInfoTxt" />
 
         <EditText
             android:id="@+id/suburbTxtBx"
@@ -119,6 +121,7 @@
             android:layout_height="40dp"
             android:layout_weight="0.5"
             android:hint="Suburb*"
+            android:maxLength="30"
             android:inputType="text"
             app:layout_constraintBottom_toTopOf="@+id/postInfoTxt"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -140,8 +143,8 @@
         <TextView
             android:id="@+id/postInfoTxt"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="wrap_content"
+            android:layout_weight="0.5"
             android:text="Postal Information"
             android:textAppearance="@style/TextAppearance.AppCompat.Display1"
             app:layout_constraintBottom_toTopOf="@+id/sameAddChBx"
@@ -163,8 +166,9 @@
         <EditText
             android:id="@+id/pAddressTxtBx"
             android:layout_width="0dp"
-            android:layout_weight="0.5"
             android:layout_height="40dp"
+            android:layout_weight="0.5"
+            android:maxLength="30"
             android:hint="Street Address*"
             android:inputType="textPostalAddress"
             app:layout_constraintBottom_toTopOf="@+id/pAreaCodeTxtBx"
@@ -190,6 +194,7 @@
             android:layout_height="40dp"
             android:layout_weight="0.5"
             android:hint="Suburb*"
+            android:maxLength="30"
             android:inputType="textPhonetic"
             app:layout_constraintBottom_toTopOf="@+id/CancelBtn"
             app:layout_constraintLeft_toLeftOf="parent"
